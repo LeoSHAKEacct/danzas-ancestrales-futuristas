@@ -102,10 +102,13 @@
     position:relative; z-index:5; max-width:1180px; width:100%; padding:0 20px;
     display:flex; flex-direction:column; align-items:center; text-align:center; gap:28px;
   }
+  .hero-columns{
+    width:100%; display:flex; flex-direction:column; align-items:center; text-align:center; gap:28px;
+  }
   .hero-right{ position:relative; width:100%; }
   .hero-left{ width:100%; }
   .hero-character{
-    position:static; width:min(320px, 78vw); margin:0 auto 18px;
+    position:static; width:min(320px, 78vw); margin:0 auto;
     pointer-events:none; opacity:.94;
   }
   .hero-character img{ width:100%; height:auto; display:block; border-radius:18px; }
@@ -120,8 +123,9 @@
     font-weight:800;
     color:var(--wine);
     text-shadow:2px 2px 0 var(--mustard);
-    margin:0 0 10px;
+    margin:0;
     line-height:1.2;
+    text-align:center;
   }
   .hero .subtitle{
     font-size:1.25rem; color:var(--ink); font-weight:600; margin-bottom:6px;
@@ -131,20 +135,13 @@
   .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
 
   @media (min-width:900px){
-    .hero-inner{
+    .hero-columns{
       flex-direction:row-reverse; align-items:center; text-align:left; gap:50px;
     }
     .hero-right{ flex:1.1; text-align:center; }
     .hero-left{ flex:1; text-align:left; }
     .hero-left .subtitle-es, .hero-left p.desc{ margin-left:0; margin-right:0; }
     .hero-actions{ justify-content:flex-start; }
-    .hero-character{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:clamp(320px, 34vw, 520px); margin:0; z-index:1;
-      -webkit-mask-image:radial-gradient(ellipse 62% 58% at 50% 45%, black 55%, transparent 92%);
-      mask-image:radial-gradient(ellipse 62% 58% at 50% 45%, black 55%, transparent 92%);
-    }
-    .hero-right h1{ position:relative; z-index:2; }
   }
   .btn{
     display:inline-block; padding:15px 34px; border-radius:40px; font-weight:700;
@@ -323,20 +320,22 @@
 
 <header class="hero">
   <div class="hero-inner">
-    <div class="hero-right">
-      <div class="hero-character" aria-hidden="true">
-        <img src="assets/img/cyber-indio.png" alt="Illustrated ancestral chief in a feather headdress, stylized with a cyber-futuristic visor">
+    <h1>DANZAS ANCESTRALES<br>Y FUTURISTAS</h1>
+    <div class="hero-columns">
+      <div class="hero-right">
+        <div class="hero-character" aria-hidden="true">
+          <img src="assets/img/cyber-indio.png" alt="Illustrated ancestral chief in a feather headdress, stylized with a cyber-futuristic visor">
+        </div>
       </div>
-      <h1>DANZAS ANCESTRALES<br>Y FUTURISTAS</h1>
-    </div>
-    <div class="hero-left">
-      <span class="eyebrow"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín</span>
-      <div class="subtitle-es">a social-gathering to celebrate life</div>
-      <div class="subtitle">Rooftop Sessions</div>
-      <p class="desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
-      <div class="hero-actions">
-        <a href="#schedule" class="btn btn-primary">Ver próximas fiestas</a>
-        <a href="#about" class="btn btn-outline">La Movida ↓</a>
+      <div class="hero-left">
+        <span class="eyebrow"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín</span>
+        <div class="subtitle-es">a social-gathering to celebrate life</div>
+        <div class="subtitle">Rooftop Sessions</div>
+        <p class="desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
+        <div class="hero-actions">
+          <a href="#schedule" class="btn btn-primary">Ver próximas fiestas</a>
+          <a href="#about" class="btn btn-outline">La Movida ↓</a>
+        </div>
       </div>
     </div>
   </div>
