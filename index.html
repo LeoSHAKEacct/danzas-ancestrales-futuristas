@@ -221,6 +221,30 @@
   .book-btn:hover{ background:var(--terracotta); }
   .book-btn:disabled{ background:#999; cursor:not-allowed; }
 
+  /* ---------- LINE-UP ---------- */
+  .lineup{ background:var(--parchment); }
+  .lineup-list{ max-width:760px; margin:0 auto; }
+  .slot{
+    display:flex; align-items:baseline; gap:20px;
+    padding:16px 6px; border-bottom:2px dashed rgba(122,31,43,.28);
+  }
+  .slot:last-child{ border-bottom:none; }
+  .slot .hour{
+    font-family:'Unbounded', cursive; font-weight:700; color:var(--wine);
+    font-size:.95rem; min-width:132px; white-space:nowrap;
+  }
+  .slot .kind{
+    display:block; font-family:'Poppins',sans-serif; font-size:.68rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:1.4px; color:var(--terracotta); margin-bottom:2px;
+  }
+  .slot .act{ font-family:'Yeseva One',serif; font-size:1.22rem; line-height:1.35; }
+  .slot a{ color:var(--terracotta); text-decoration:underline; text-decoration-thickness:2px; text-underline-offset:3px; font-family:'Poppins',sans-serif; font-size:.82rem; font-weight:600; }
+  .slot a:hover{ color:var(--wine); }
+  @media (max-width:600px){
+    .slot{ flex-direction:column; gap:2px; }
+    .slot .hour{ min-width:0; }
+  }
+
   /* ---------- PRICING STRIP ---------- */
   .pricing{ background:var(--wine); color:var(--cream); text-align:center; }
   .pricing .section-title, .pricing .section-sub{ color:var(--mustard); }
@@ -312,6 +336,7 @@
   <ul>
     <li><a href="#about">La Movida</a></li>
     <li><a href="#schedule">Fiestas / Parties</a></li>
+    <li><a href="#lineup">Line-up</a></li>
     <li><a href="#pricing">Entradas</a></li>
     <li><a href="#mytickets">Mis Entradas</a></li>
   </ul>
@@ -364,6 +389,12 @@
   <h2 class="section-title">Próximas Fiestas</h2>
   <div class="section-sub">Every 15 days · Rotating dancer / mover / facilitator</div>
   <div class="cards" id="cardsContainer"></div>
+</section>
+
+<section class="lineup" id="lineup">
+  <h2 class="section-title">Line-up</h2>
+  <div class="section-sub" id="lineupSub"></div>
+  <div class="lineup-list" id="lineupList"></div>
 </section>
 
 <section class="pricing" id="pricing">
@@ -522,7 +553,21 @@ const SCHEDULE = [
     time: '12:00 mediodía – 02:00 madrugada',
     title: 'Ecstatic Dance',
     role: roleByKey('mover'),
-    guest: TBA_GUEST,
+    roleLabel: 'Line-up del día',
+    guest: {
+      name: 'Sound healing · Human-Connection game · 4 DJ sets',
+      bio: 'Sanación sonora, juego de conexión humana y música hasta la 1 am. Line-up completo más abajo.'
+    },
+    lineup: [
+      { hour:'15:00 – 16:00', kind:'Sanación sonora', act:'Sound Healing' },
+      { hour:'17:00 – 18:00', kind:'Juego de conexión', act:'Human-Connection Game' },
+      { hour:'18:00 – 19:00', kind:'DJ set', act:'DJ Camilo' },
+      { hour:'19:00 – 21:00', kind:'DJ set', act:'DJ Leo' },
+      { hour:'21:00 – 23:00', kind:'DJ set', act:'DJ Tachi Ale',
+        link:'https://on.soundcloud.com/WTDURfMZsiy6rJytMd', linkLabel:'Escuchar en SoundCloud' },
+      { hour:'23:00 – 01:00', kind:'DJ set', act:'DJ Soe Music',
+        link:'https://www.instagram.com/soe__music?igsh=NHF3ejVoZDcxbm1v', linkLabel:'Instagram' }
+    ],
     spotsLeft: 40,
     lumaEventId: ''   // paste the Luma event id (evt-…) to show its live count
   },
@@ -547,7 +592,7 @@ function renderSchedule(){
       <div class="body">
         <div class="date">${formatDate(ev.date)} · ${ev.time}</div>
         <div class="event-title">${ev.title}</div>
-        <div class="role">Guest ${ev.role.label}</div>
+        <div class="role">${ev.roleLabel || 'Guest ' + ev.role.label}</div>
         <div class="guest">${ev.guest.name}</div>
         <div class="bio">${ev.guest.bio}</div>
         <div class="price-row">
@@ -560,6 +605,30 @@ function renderSchedule(){
   `).join('');
 }
 renderSchedule();
+
+/* =========================================================
+   LINE-UP — the hour-by-hour programme of the next party that has one.
+   Hides itself if no event in SCHEDULE carries a lineup yet.
+   ========================================================= */
+function renderLineup(){
+  const section = document.getElementById('lineup');
+  const ev = SCHEDULE.find(e => e.lineup && e.lineup.length);
+  if (!ev){ section.style.display = 'none'; return; }
+
+  document.getElementById('lineupSub').textContent =
+    `${formatDate(ev.date)} · Puertas 12:00 del mediodía · Música desde las 15:00`;
+
+  document.getElementById('lineupList').innerHTML = ev.lineup.map(s => `
+    <div class="slot">
+      <span class="hour">${s.hour}</span>
+      <span class="act">
+        <span class="kind">${s.kind}</span>
+        ${s.act}${s.link ? ` <a href="${s.link}" target="_blank" rel="noopener">${s.linkLabel} ↗</a>` : ''}
+      </span>
+    </div>
+  `).join('');
+}
+renderLineup();
 
 /* =========================================================
    LUMA — live registered count per party.
