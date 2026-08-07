@@ -403,9 +403,9 @@
   <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</p>
   <p>Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
-  <p>Every 15 days · Doors 19:00 · All levels, all bodies, all cultures welcome.</p>
+  <p>Cada 15 días · Próxima: domingo 16 de agosto, 00:00 – 02:00 · All levels, all bodies, all cultures welcome.</p>
   <p>To book / more info: <a href="https://wa.me/573223140283" style="color:var(--mustard);">WhatsApp +57 322 314 0283</a></p>
-  <p class="fine">This is a demo booking flow. Checkout is simulated — no real payment is processed. To take real payments, connect a payment processor (e.g. Stripe Checkout) and a backend to store orders server-side.</p>
+  <p class="fine">Pagos procesados de forma segura por Stripe · Payments securely processed by Stripe. Tu entrada con código QR se genera al confirmarse el pago.</p>
 </footer>
 
 <!-- BOOKING MODAL -->
@@ -430,17 +430,10 @@
     <label>Email</label>
     <input type="email" id="guestEmail" placeholder="lola@email.com">
 
-    <label>Card details (demo only)</label>
-    <input type="text" id="cardNumber" placeholder="4242 4242 4242 4242" maxlength="19">
-    <div class="row2">
-      <input type="text" id="cardExp" placeholder="MM/YY" maxlength="5">
-      <input type="text" id="cardCvc" placeholder="CVC" maxlength="4">
-    </div>
-
     <div class="total"><span>Total</span><span id="totalPrice">$15</span></div>
     <div class="error-msg" id="errorMsg"></div>
-    <button class="pay-btn" id="payBtn" onclick="processPayment()">Pagar y reservar / Pay &amp; Book</button>
-    <div class="demo-note">🔒 Simulated payment — this demo never charges a real card.</div>
+    <button class="pay-btn" id="payBtn" onclick="startCheckout()">Pagar con Stripe / Pay &amp; Book</button>
+    <div class="demo-note">🔒 Pago seguro con Stripe — te llevamos a la página de pago de Stripe y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.</div>
   </div>
 </div>
 
@@ -510,7 +503,11 @@ const ROLE_POOL = [
   }
 ];
 
+/* Display prices only — the real amounts charged live in api/checkout.js.
+   If you change a price, change it in BOTH places. */
 const TICKET_PRICES = { general: 15, vip: 35 };
+
+const TBA_GUEST = { name:'Por anunciar / TBA', bio:'Guest artist announced soon — follow us on WhatsApp for the reveal.' };
 
 function formatDate(d){
   return d.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
@@ -521,18 +518,20 @@ function roleByKey(key){ return ROLE_POOL.find(r => r.key === key); }
 const SCHEDULE = [
   {
     id:'party-1',
-    date: new Date('2026-08-08T19:00:00'),
-    title: 'Gathering Dance Event',
-    role: roleByKey('dancer'),
-    guest: roleByKey('dancer').guests[0],
+    date: new Date('2026-08-16T00:00:00'),
+    time: '00:00 – 02:00',
+    title: 'Ecstatic Dance',
+    role: roleByKey('mover'),
+    guest: TBA_GUEST,
     spotsLeft: 40
   },
   {
     id:'party-2',
-    date: new Date('2026-08-22T19:00:00'),
-    title: 'Jam Session & Pool Party',
-    role: roleByKey('musician'),
-    guest: roleByKey('musician').guests[0],
+    date: new Date('2026-08-31T00:00:00'),
+    time: '00:00 – 02:00',
+    title: 'Por anunciar / To be announced',
+    role: roleByKey('mover'),
+    guest: TBA_GUEST,
     spotsLeft: 40
   }
 ];
@@ -544,7 +543,7 @@ function renderSchedule(){
       <span class="tag">${ev.role.emoji} ${ev.role.label}</span>
       <div class="banner ${ev.role.bannerClass}">${ev.role.emoji}</div>
       <div class="body">
-        <div class="date">${formatDate(ev.date)}</div>
+        <div class="date">${formatDate(ev.date)} · ${ev.time}</div>
         <div class="event-title">${ev.title}</div>
         <div class="role">Guest ${ev.role.label}</div>
         <div class="guest">${ev.guest.name}</div>
@@ -570,16 +569,13 @@ function openModal(eventId){
   document.getElementById('eventSummary').innerHTML = `
     <strong>${currentEvent.title}</strong><br>
     ${formatDate(currentEvent.date)}<br>
-    ${currentEvent.role.emoji} ${currentEvent.role.label}: ${currentEvent.guest.name}<br>
-    Doors 19:00 · Hotel Diez Treinta y Seis Rooftop
+    ${currentEvent.time} · Hotel Diez Treinta y Seis Rooftop<br>
+    ${currentEvent.role.emoji} ${currentEvent.role.label}: ${currentEvent.guest.name}
   `;
   document.getElementById('ticketType').value = 'general';
   document.getElementById('qty').value = 1;
   document.getElementById('guestName').value = '';
   document.getElementById('guestEmail').value = '';
-  document.getElementById('cardNumber').value = '';
-  document.getElementById('cardExp').value = '';
-  document.getElementById('cardCvc').value = '';
   document.getElementById('errorMsg').style.display = 'none';
   updateTotal();
   document.getElementById('bookingModal').classList.add('active');
@@ -602,57 +598,121 @@ function showError(msg){
   el.style.display = 'block';
 }
 
-function processPayment(){
+/* =========================================================
+   STRIPE CHECKOUT — real payment
+   The browser never sees a card number and never sends an amount: it asks
+   /api/checkout for a Stripe-hosted checkout page and hands the buyer over.
+   Stripe sends them back to /?paid=1&session_id=… where the ticket is issued.
+   ========================================================= */
+const PAY_BTN_LABEL = 'Pagar con Stripe / Pay & Book';
+
+async function startCheckout(){
   const name = document.getElementById('guestName').value.trim();
   const email = document.getElementById('guestEmail').value.trim();
-  const cardNumber = document.getElementById('cardNumber').value.replace(/\s/g,'');
-  const cardExp = document.getElementById('cardExp').value.trim();
-  const cardCvc = document.getElementById('cardCvc').value.trim();
   const type = document.getElementById('ticketType').value;
   const qty = Math.max(1, parseInt(document.getElementById('qty').value || '1', 10));
 
-  if (!name) return showError('Please enter your name / Ingresa tu nombre.');
-  if (!/^\S+@\S+\.\S+$/.test(email)) return showError('Please enter a valid email.');
-  if (cardNumber.length < 12) return showError('Please enter a valid card number (demo — try 4242 4242 4242 4242).');
-  if (!/^\d{2}\/\d{2}$/.test(cardExp)) return showError('Expiry must be MM/YY.');
-  if (cardCvc.length < 3) return showError('CVC must be 3-4 digits.');
+  if (!name) return showError('Ingresa tu nombre / Please enter your name.');
+  if (!/^\S+@\S+\.\S+$/.test(email)) return showError('Email inválido / Please enter a valid email.');
 
   document.getElementById('errorMsg').style.display = 'none';
   const payBtn = document.getElementById('payBtn');
   payBtn.disabled = true;
-  payBtn.textContent = 'Processing payment…';
+  payBtn.textContent = 'Conectando con Stripe…';
 
-  // Simulated payment delay (this is where a real Stripe/PSP call would go)
-  setTimeout(() => {
+  try {
+    const res = await fetch('/api/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name, email, qty,
+        ticketType: type,
+        eventId: currentEvent.id,
+        eventTitle: currentEvent.title,
+        eventDate: currentEvent.date.toISOString(),
+        eventTime: currentEvent.time,
+        role: currentEvent.role.label,
+        guestHost: currentEvent.guest.name
+      })
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok || !data.url) throw new Error(data.error || 'No pudimos abrir el pago / Could not open checkout.');
+
+    window.location.href = data.url; // hand off to Stripe
+  } catch (err) {
     payBtn.disabled = false;
-    payBtn.textContent = 'Pagar y reservar / Pay & Book';
-    const ticket = createTicket({ name, email, type, qty });
-    closeModal();
-    showTicket(ticket);
-    saveTicket(ticket);
-    renderMyTickets();
-  }, 1400);
+    payBtn.textContent = PAY_BTN_LABEL;
+    showError(err.message);
+  }
 }
 
-function createTicket({name, email, type, qty}){
-  const id = 'DAYF-' + currentEvent.id.toUpperCase() + '-' + Math.random().toString(36).slice(2,8).toUpperCase();
+/* Back from Stripe: verify the session server-side, then issue the ticket. */
+async function handleReturnFromStripe(){
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get('canceled')){
+    history.replaceState({}, '', window.location.pathname + window.location.hash);
+    return;
+  }
+  if (!params.get('paid') || !params.get('session_id')) return;
+
+  const sessionId = params.get('session_id');
+  history.replaceState({}, '', window.location.pathname);
+
+  try {
+    const res = await fetch('/api/session?session_id=' + encodeURIComponent(sessionId));
+    const data = await res.json();
+    if (!res.ok || !data.paid) return;
+
+    const ticket = ticketFromSession(data);
+    saveTicket(ticket);
+    renderMyTickets();   // list first, so a display hiccup can't lose the ticket
+    showTicket(ticket);
+  } catch (err) {
+    console.error('Could not confirm payment', err);
+  }
+}
+
+function ticketFromSession(s){
+  const m = s.metadata || {};
   return {
-    id,
-    eventTitle: currentEvent.title,
-    eventDate: currentEvent.date.toISOString(),
-    role: currentEvent.role.label,
-    guestHost: currentEvent.guest.name,
-    holderName: name,
-    holderEmail: email,
-    ticketType: type,
-    qty,
-    total: TICKET_PRICES[type] * qty,
+    id: 'DAYF-' + s.sessionId.slice(-8).toUpperCase(),
+    eventTitle: m.eventTitle || 'Danzas Ancestrales y Futuristas',
+    eventDate: m.eventDate || new Date().toISOString(),
+    eventTime: m.eventTime || '',
+    role: m.role || '',
+    guestHost: m.guestHost || 'Por anunciar / TBA',
+    holderName: m.holderName || '',
+    holderEmail: s.email || '',
+    ticketType: m.ticketType === 'vip' ? 'vip' : 'general',
+    qty: s.qty,
+    total: s.total,
     purchasedAt: new Date().toISOString()
   };
 }
 
+/* Kept short on purpose: the QR library's default error-correction level
+   overflows on long strings, and the door only needs id + holder + day. */
 function ticketQrPayload(t){
-  return `DAYF-TICKET|${t.id}|${t.holderName}|${t.eventDate}`;
+  const day = t.eventDate ? new Date(t.eventDate).toLocaleDateString('en-CA') : '';
+  return `DAYF|${t.id}|${t.holderName}|${day}`;
+}
+
+/* Never let a QR failure block the ticket itself — fall back to the code. */
+function renderQr(el, t){
+  if (!el) return;
+  if (!window.QRCode){ el.textContent = t.id; return; }
+  try {
+    new QRCode(el, {
+      text: ticketQrPayload(t),
+      width: 110, height: 110,
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  } catch (err) {
+    console.error('QR render failed', err);
+    el.textContent = t.id;
+  }
 }
 
 function showTicket(t){
@@ -663,7 +723,7 @@ function showTicket(t){
         <h3>DANZAS ANCESTRALES Y FUTURISTAS</h3>
         <div class="meta">
           <strong>${t.eventTitle}</strong><br>
-          ${formatDate(eventDate)}<br>
+          ${formatDate(eventDate)}${t.eventTime ? ' · ' + t.eventTime : ''}<br>
           Guest: ${t.role} — ${t.guestHost}<br>
           Holder: ${t.holderName}<br>
           Type: ${t.ticketType === 'vip' ? 'VIP Terraza' : 'Círculo General'} × ${t.qty}<br>
@@ -675,26 +735,30 @@ function showTicket(t){
     </div>
   `;
   document.getElementById('ticketModal').classList.add('active');
-  // Render QR (falls back to text if library fails to load)
-  const qrEl = document.getElementById('qr-' + t.id);
-  if (window.QRCode && qrEl) {
-    new QRCode(qrEl, { text: ticketQrPayload(t), width: 110, height: 110 });
-  } else if (qrEl) {
-    qrEl.textContent = t.id;
-  }
+  renderQr(document.getElementById('qr-' + t.id), t);
 }
 
 /* =========================================================
-   PERSISTENCE — localStorage (front-end demo only)
+   PERSISTENCE — localStorage, so "Mis Entradas" survives a reload.
+   Stripe remains the source of truth for what was actually paid; this is only
+   the buyer's copy of the ticket on the device they bought it on.
    ========================================================= */
+const TICKETS_KEY = 'dayf_tickets';
+
+function loadTickets(){
+  try { return JSON.parse(localStorage.getItem(TICKETS_KEY) || '[]'); }
+  catch { return []; }
+}
+
 function saveTicket(t){
-  const all = JSON.parse(localStorage.getItem('solyraiz_tickets') || '[]');
+  const all = loadTickets();
+  if (all.some(x => x.id === t.id)) return; // reloading the success URL must not duplicate
   all.push(t);
-  localStorage.setItem('solyraiz_tickets', JSON.stringify(all));
+  localStorage.setItem(TICKETS_KEY, JSON.stringify(all));
 }
 
 function renderMyTickets(){
-  const all = JSON.parse(localStorage.getItem('solyraiz_tickets') || '[]');
+  const all = loadTickets();
   const container = document.getElementById('ticketsList');
   if (!all.length){
     container.innerHTML = '<p class="empty-state">No tickets yet — book a party above and it\'ll show up here.</p>';
@@ -708,7 +772,7 @@ function renderMyTickets(){
         <h3>DANZAS ANCESTRALES Y FUTURISTAS</h3>
         <div class="meta">
           <strong>${t.eventTitle}</strong><br>
-          ${formatDate(eventDate)}<br>
+          ${formatDate(eventDate)}${t.eventTime ? ' · ' + t.eventTime : ''}<br>
           Guest: ${t.role} — ${t.guestHost}<br>
           Holder: ${t.holderName}<br>
           Type: ${t.ticketType === 'vip' ? 'VIP Terraza' : 'Círculo General'} × ${t.qty}<br>
@@ -720,12 +784,10 @@ function renderMyTickets(){
     </div>`;
   }).join('');
 
-  all.forEach(t => {
-    const el = document.getElementById('mine-' + t.id);
-    if (window.QRCode && el) new QRCode(el, { text: ticketQrPayload(t), width: 110, height: 110 });
-  });
+  all.forEach(t => renderQr(document.getElementById('mine-' + t.id), t));
 }
 renderMyTickets();
+handleReturnFromStripe();
 </script>
 </body>
 </html>

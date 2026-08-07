@@ -1,0 +1,88 @@
+/**
+ * POST /api/checkout
+ * Creates a real Stripe Checkout Session and returns the hosted checkout URL.
+ *
+ * Needs one environment variable in the Vercel project: STRIPE_SECRET_KEY
+ * (Vercel → Project → Settings → Environment Variables).
+ *
+ * Prices live HERE, on the server, on purpose — the browser only sends which
+ * ticket type and how many, never an amount. Keep these in sync with the
+ * TICKET_PRICES object in index.html (that one is display-only).
+ */
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const CURRENCY = 'usd';
+const PRICES = { general: 1500, vip: 3500 }; // in cents
+const LABELS = { general: 'Círculo General', vip: 'VIP Terraza' };
+const MAX_QTY = 8;
+
+function clean(value, max) {
+  return String(value == null ? '' : value).slice(0, max);
+}
+
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return res.status(500).json({
+      error: 'Stripe no está configurado / Stripe is not configured yet — add STRIPE_SECRET_KEY to this project on Vercel.'
+    });
+  }
+
+  try {
+    const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
+
+    const type = body.ticketType === 'vip' ? 'vip' : 'general';
+    const qty = Math.min(MAX_QTY, Math.max(1, parseInt(body.qty, 10) || 1));
+    const name = clean(body.name, 120);
+    const email = clean(body.email, 200);
+    const eventId = clean(body.eventId, 60);
+    const eventTitle = clean(body.eventTitle, 120) || 'Danzas Ancestrales y Futuristas';
+    const eventDate = clean(body.eventDate, 40);
+    const eventTime = clean(body.eventTime, 40);
+    const role = clean(body.role, 60);
+    const guestHost = clean(body.guestHost, 120);
+
+    if (!name) return res.status(400).json({ error: 'Falta el nombre / Name is required.' });
+    if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: 'Email inválido / Invalid email.' });
+
+    const proto = (req.headers['x-forwarded-proto'] || 'https').split(',')[0];
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const origin = `${proto}://${host}`;
+
+    const metadata = {
+      eventId, eventTitle, eventDate, eventTime, role, guestHost,
+      ticketType: type,
+      holderName: name
+    };
+
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      customer_email: email,
+      line_items: [{
+        quantity: qty,
+        price_data: {
+          currency: CURRENCY,
+          unit_amount: PRICES[type],
+          product_data: {
+            name: `${LABELS[type]} — ${eventTitle}`,
+            description: [eventDate, eventTime, 'Hotel Diez Treinta y Seis Rooftop, Provenza, Medellín']
+              .filter(Boolean).join(' · ')
+          }
+        }
+      }],
+      metadata,
+      payment_intent_data: { metadata },
+      success_url: `${origin}/?paid=1&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${origin}/?canceled=1#schedule`
+    });
+
+    return res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error('checkout error', err);
+    return res.status(500).json({ error: err.message || 'Stripe error' });
+  }
+};

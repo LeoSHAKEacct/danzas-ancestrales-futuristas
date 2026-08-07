@@ -1,0 +1,9 @@
+{
+  "name": "danzas-ancestrales-y-futuristas",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Rooftop dance parties at Hotel Diez Treinta y Seis, Provenza, Medellín — static site + Stripe Checkout on Vercel",
+  "dependencies": {
+    "stripe": "^17.7.0"
+  }
+}
