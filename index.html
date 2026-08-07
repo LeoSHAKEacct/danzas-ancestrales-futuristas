@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DANZAS ANCESTRALES Y FUTURISTAS — Rooftop Sessions | Hotel Diez Treinta y Seis, Medellín</title>
-<meta name="description" content="Fiesta en la azotea del Hotel Diez Treinta y Seis, Provenza, Medellín. Domingo 16 de agosto: sanación sonora, juego de conexión humana y DJs desde las 12:00 del mediodía hasta las 02:00. Entradas desde $15.">
+<meta name="description" content="Fiesta en la azotea del Hotel Diez Treinta y Seis, Provenza, Medellín. Domingo 16 de agosto: sanación sonora, juego de conexión humana y DJs desde las 12:00 del mediodía hasta las 02:00. Entradas desde $12.000 COP.">
 <link rel="icon" href="assets/img/logo-10-13.jpg">
 
 <!-- Link previews (WhatsApp, Instagram, Facebook). Update og:url if a custom domain replaces the vercel.app one. -->
@@ -13,12 +13,12 @@
 <meta property="og:site_name" content="Danzas Ancestrales y Futuristas">
 <meta property="og:url" content="https://danzas-ancestrales-futuristas.vercel.app/">
 <meta property="og:title" content="Danzas Ancestrales y Futuristas — Rooftop, domingo 16 de agosto">
-<meta property="og:description" content="Sanación sonora, juego de conexión humana y DJs hasta la 1 am, en la azotea de Provenza. Desde las 12:00 del mediodía. Entradas desde $15.">
+<meta property="og:description" content="Sanación sonora, juego de conexión humana y DJs hasta la 1 am, en la azotea de Provenza. Desde las 12:00 del mediodía. Entradas desde $12.000 COP.">
 <meta property="og:image" content="https://danzas-ancestrales-futuristas.vercel.app/assets/img/cyber-indio.png">
 <meta property="og:image:alt" content="Ilustración de un jefe ancestral con visor cyber-futurista">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Danzas Ancestrales y Futuristas — Rooftop, domingo 16 de agosto">
-<meta name="twitter:description" content="Sanación sonora, juego de conexión humana y DJs hasta la 1 am, en la azotea de Provenza. Entradas desde $15.">
+<meta name="twitter:description" content="Sanación sonora, juego de conexión humana y DJs hasta la 1 am, en la azotea de Provenza. Entradas desde $12.000 COP.">
 <meta name="twitter:image" content="https://danzas-ancestrales-futuristas.vercel.app/assets/img/cyber-indio.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Yeseva+One&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -132,7 +132,9 @@
     display:inline-flex; align-items:center; background:var(--wine); color:var(--mustard);
     padding:6px 20px 6px 6px; border-radius:999px; font-weight:700; font-size:.8rem;
     letter-spacing:2px; margin-bottom:18px; text-transform:uppercase;
+    text-decoration:none; transition:.18s;
   }
+  a.eyebrow:hover{ background:var(--terracotta); color:var(--cream); transform:translateY(-2px); }
   .hero .eyebrow .loc-logo{ border-color:var(--cream); margin-right:12px; }
   .hero h1{
     font-size:clamp(1.9rem, 6vw, 3.6rem);
@@ -142,6 +144,56 @@
     margin:0;
     line-height:1.2;
     text-align:center;
+  }
+  /* Galaxy letters: nebula clouds + a tiling starfield poured into the glyphs.
+     Guarded by @supports so the plain wine title survives anywhere the clip
+     isn't available — otherwise the fallback would be invisible text. */
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .hero h1, .galaxy-text{
+      color:transparent;
+      -webkit-text-fill-color:transparent;
+      text-shadow:none;
+      background-color:#04020c;
+      background-image:
+        /* Stars first so they sit on top. Two tiles at different sizes give an
+           irregular field instead of an obvious grid. */
+        radial-gradient(1.5px 1.5px at 12% 20%, #fff 99%, transparent 100%),
+        radial-gradient(1px 1px at 38% 8%, #ffeccc 99%, transparent 100%),
+        radial-gradient(1.8px 1.8px at 62% 34%, #fff 99%, transparent 100%),
+        radial-gradient(1px 1px at 85% 16%, #cfe6ff 99%, transparent 100%),
+        radial-gradient(1.3px 1.3px at 22% 58%, #fff 99%, transparent 100%),
+        radial-gradient(1px 1px at 52% 72%, #ffd9ec 99%, transparent 100%),
+        radial-gradient(1.7px 1.7px at 78% 62%, #fff 99%, transparent 100%),
+        radial-gradient(1px 1px at 92% 88%, #e2d6ff 99%, transparent 100%),
+        radial-gradient(1.2px 1.2px at 30% 90%, #fff 99%, transparent 100%),
+        radial-gradient(1px 1px at 68% 94%, #fff 99%, transparent 100%),
+        radial-gradient(1.4px 1.4px at 6% 44%, #fff6e0 99%, transparent 100%),
+        radial-gradient(1px 1px at 46% 26%, #fff 99%, transparent 100%),
+        /* nebulae — kept translucent so deep space stays dominant */
+        radial-gradient(ellipse at 15% 30%, rgba(217,78,122,.6) 0%, transparent 38%),
+        radial-gradient(ellipse at 68% 20%, rgba(14,124,123,.55) 0%, transparent 36%),
+        radial-gradient(ellipse at 88% 70%, rgba(140,70,200,.6) 0%, transparent 40%),
+        radial-gradient(ellipse at 40% 82%, rgba(242,183,5,.35) 0%, transparent 32%),
+        radial-gradient(ellipse at 55% 50%, rgba(70,40,150,.5) 0%, transparent 45%);
+      background-size:
+        /* small tiles => several stars land inside every letter */
+        70px 70px, 70px 70px, 70px 70px, 70px 70px, 70px 70px, 70px 70px,
+        110px 110px, 110px 110px, 110px 110px, 110px 110px, 110px 110px, 110px 110px,
+        160% 160%, 160% 160%, 160% 160%, 160% 160%, 160% 160%;
+      background-repeat:repeat;
+      -webkit-background-clip:text;
+      background-clip:text;
+      /* drop-shadow follows the glyph alpha; text-shadow would paint a solid slab */
+      filter:drop-shadow(2px 2px 0 var(--mustard)) drop-shadow(0 0 18px rgba(106,59,110,.45));
+      animation:driftGalaxy 60s linear infinite;
+    }
+  }
+  @keyframes driftGalaxy{
+    from{ background-position:0% 50%; }
+    to{ background-position:100% 50%; }
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hero h1, .galaxy-text{ animation:none; }
   }
   .hero .subtitle{
     font-size:1.25rem; color:var(--ink); font-weight:600; margin-bottom:6px;
@@ -271,6 +323,12 @@
   .tier h3{ color:var(--mustard); margin:0 0 6px; }
   .tier .p{ font-size:2.2rem; font-weight:700; margin:10px 0; }
   .tier ul{ text-align:left; padding-left:18px; font-size:.88rem; opacity:.9; line-height:1.7;}
+  .tier-promo{
+    max-width:640px; margin:30px auto 0; font-size:.9rem; line-height:1.6;
+    color:var(--cream); background:rgba(242,183,5,.14);
+    border:1px dashed var(--mustard); border-radius:14px; padding:14px 20px;
+  }
+  .tier-promo strong{ color:var(--mustard); }
 
   /* ---------- FOOTER ---------- */
   footer{ background:var(--ink); color:var(--parchment); padding:50px 6% 26px; text-align:center; }
@@ -309,6 +367,10 @@
   .pay-btn[disabled]{ opacity:.6; cursor:progress; }
   .error-msg{ color:var(--wine); background:#fbdada; border-radius:8px; padding:8px 12px; font-size:.8rem; margin-top:10px; display:none;}
   .demo-note{ font-size:.72rem; opacity:.6; margin-top:14px; text-align:center; }
+  .promo-note{
+    background:rgba(242,183,5,.18); border:1px dashed var(--mustard); border-radius:10px;
+    padding:9px 12px; font-size:.78rem; margin-top:8px; line-height:1.45;
+  }
 
   /* ---------- TICKET ---------- */
   .ticket{
@@ -321,8 +383,6 @@
   .ticket .id{ font-family:monospace; font-size:.78rem; opacity:.7; }
 
   /* ---------- MY TICKETS ---------- */
-  .mytickets{ background:var(--parchment); }
-  #ticketsList{ max-width:700px; margin:0 auto; display:flex; flex-direction:column; gap:18px; }
   .empty-state{ text-align:center; opacity:.6; font-size:.95rem; }
 
   ::selection{ background:var(--mustard); }
@@ -354,7 +414,6 @@
     <li><a href="#schedule">Fiestas / Parties</a></li>
     <li><a href="#lineup">Line-up</a></li>
     <li><a href="#pricing">Entradas</a></li>
-    <li><a href="#mytickets">Mis Entradas</a></li>
   </ul>
   <a href="#schedule" class="nav-cta">Reserva ahora</a>
 </nav>
@@ -369,10 +428,10 @@
         </div>
       </div>
       <div class="hero-left">
-        <span class="eyebrow"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín</span>
-        <div class="subtitle-es">a social-gathering to celebrate life</div>
+        <a class="eyebrow" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín</a>
+        <div class="subtitle-es">A social-gathering to celebrate life</div>
         <div class="subtitle">Rooftop Sessions</div>
-        <p class="desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
+        <p class="desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
         <div class="hero-actions">
           <a href="#schedule" class="btn btn-primary">Ver próximas fiestas</a>
           <a href="#about" class="btn btn-outline">La Movida ↓</a>
@@ -393,16 +452,15 @@
     </div>
     <div>
       <p class="es">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
-      <p class="es">En 1969, medio millón de personas bailó descalza en un campo de Nueva York. Nosotros lo traemos a la azotea — con música en vivo, percusión y espíritu libre.</p>
       <p>DANZAS ANCESTRALES Y FUTURISTAS is our rooftop's answer to Woodstock: barefoot, sun-drunk, community-first gatherings held on the Hotel Diez Treinta y Seis terrace every 15 days. No headliners, no hierarchy — just a rotating circle of guests who hold space differently each time: a dancer one week, a movement activator the next, a yoga facilitator or live musician after that. Some sessions lean into wellness practices, others into games and play — it varies every 15 days, and everyone is welcome: digital nomads, Medellín residents, and the simply curious.</p>
-      <p>Tickets include rooftop and pool access, one welcome drink, and a guided opening circle. Come as you are — flowers, fringe, and good energy encouraged.</p>
+      <p>Tickets include rooftop and pool access, one welcome drink, and a guided opening circle. Daylight hours run on vibe-coding sessions and co-working before the music takes over. Come as you are — flowers, fringe, and good energy encouraged.</p>
     </div>
   </div>
 </section>
 
 <div class="scallop-bottom"></div>
 <section class="schedule" id="schedule">
-  <h2 class="section-title">Próximas Fiestas</h2>
+  <h2 class="section-title galaxy-text">Próximas Fiestas</h2>
   <div class="section-sub">Every 15 days · Rotating dancer / mover / facilitator</div>
   <div class="cards" id="cardsContainer"></div>
 </section>
@@ -418,37 +476,32 @@
   <div class="section-sub">Simple pricing, big energy</div>
   <div class="tiers">
     <div class="tier">
-      <h3>Círculo General</h3>
-      <div class="p">$15</div>
+      <h3>Mujer</h3>
+      <div class="p">$12.000</div>
       <ul>
-        <li>Rooftop &amp; pool access, full session</li>
-        <li>Welcome drink</li>
-        <li>Guided opening circle</li>
-        <li>Digital ticket + QR entry</li>
+        <li>Acceso a la azotea y la piscina, sesión completa</li>
+        <li>Bebida de bienvenida</li>
+        <li>Círculo de apertura</li>
+        <li>Vibe-coding y co-working de día</li>
       </ul>
     </div>
     <div class="tier">
-      <h3>VIP Terraza</h3>
-      <div class="p">$35</div>
+      <h3>Hombre</h3>
+      <div class="p">$25.000</div>
       <ul>
-        <li>Everything in General</li>
-        <li>A massage</li>
-        <li>A special signature drink</li>
-        <li>Meet the guest host</li>
+        <li>Acceso a la azotea y la piscina, sesión completa</li>
+        <li>Bebida de bienvenida</li>
+        <li>Círculo de apertura</li>
+        <li>Vibe-coding y co-working de día</li>
       </ul>
     </div>
   </div>
-</section>
-
-<section class="mytickets" id="mytickets">
-  <h2 class="section-title">Mis Entradas</h2>
-  <div class="section-sub">Your bookings, saved on this device</div>
-  <div id="ticketsList"><p class="empty-state">No tickets yet — book a party above and it'll show up here.</p></div>
+  <p class="tier-promo">🌸 Una chica que venga con 2 amigas <strong>entra gratis</strong> — se aplica en la puerta. Precios en pesos colombianos.</p>
 </section>
 
 <footer>
   <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
-  <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</p>
+  <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo"><a href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" style="color:var(--mustard);">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</a></p>
   <p>Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
   <p>Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00 · All levels, all bodies, all cultures welcome.</p>
   <p>To book / more info: <a href="https://wa.me/573223140283" style="color:var(--mustard);">WhatsApp +57 322 314 0283</a></p>
@@ -462,11 +515,12 @@
     <h2>Reserva tu lugar</h2>
     <div class="event-summary" id="eventSummary"></div>
 
-    <label>Ticket type / Tipo de entrada</label>
+    <label>Tipo de entrada / Ticket type</label>
     <select id="ticketType">
-      <option value="general">Círculo General — $15</option>
-      <option value="vip">VIP Terraza — $35</option>
+      <option value="mujer">Mujer — $12.000 COP</option>
+      <option value="hombre">Hombre — $25.000 COP</option>
     </select>
+    <div class="promo-note">🌸 Una chica que venga con 2 amigas entra <strong>gratis</strong> — se aplica en la puerta.</div>
 
     <label>Quantity / Cantidad</label>
     <input type="number" id="qty" min="1" max="8" value="1">
@@ -477,7 +531,7 @@
     <label>Email</label>
     <input type="email" id="guestEmail" placeholder="lola@email.com">
 
-    <div class="total"><span>Total</span><span id="totalPrice">$15</span></div>
+    <div class="total"><span>Total</span><span id="totalPrice">$ 12.000</span></div>
     <div class="error-msg" id="errorMsg"></div>
     <button class="pay-btn" id="payBtn" onclick="startCheckout()">Pagar con Stripe / Pay &amp; Book</button>
     <div class="demo-note">🔒 Pago seguro con Stripe — te llevamos a la página de pago de Stripe y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.</div>
@@ -490,6 +544,7 @@
     <button class="modal-close" onclick="closeTicketModal()">×</button>
     <h2>¡Reservado! You're in 🌻</h2>
     <div id="ticketContent"></div>
+    <div class="promo-note">📸 Guardá una captura de este código QR — Stripe te envía el recibo del pago por email, pero la entrada con QR vive acá.</div>
     <button class="btn btn-primary" style="width:100%;text-align:center;margin-top:18px;" onclick="closeTicketModal()">Listo / Done</button>
   </div>
 </div>
@@ -551,8 +606,10 @@ const ROLE_POOL = [
 ];
 
 /* Display prices only — the real amounts charged live in api/checkout.js.
-   If you change a price, change it in BOTH places. */
-const TICKET_PRICES = { general: 15, vip: 35 };
+   If you change a price, change it in BOTH places. Colombian pesos. */
+const TICKET_PRICES = { hombre: 25000, mujer: 12000 };
+const TICKET_LABELS = { hombre: 'Entrada Hombre', mujer: 'Entrada Mujer' };
+const COP = new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 });
 
 const TBA_GUEST = { name:'Por anunciar / TBA', bio:'Guest artist announced soon — follow us on WhatsApp for the reveal.' };
 
@@ -567,7 +624,7 @@ const SCHEDULE = [
     id:'party-1',
     date: new Date('2026-08-16T12:00:00'),
     time: '12:00 mediodía – 02:00 madrugada',
-    title: 'Ecstatic Dance',
+    title: 'Ecstatic Dance + Vibe Code and Chill',
     role: roleByKey('mover'),
     roleLabel: 'Line-up del día',
     guest: {
@@ -612,7 +669,7 @@ function renderSchedule(){
         <div class="guest">${ev.guest.name}</div>
         <div class="bio">${ev.guest.bio}</div>
         <div class="price-row">
-          <span class="price">from $${TICKET_PRICES.general}</span>
+          <span class="price">desde ${COP.format(TICKET_PRICES.mujer)}</span>
           <span class="spots" data-spots="${ev.id}">${ev.spotsLeft} spots left</span>
         </div>
         <button class="book-btn" onclick="openModal('${ev.id}')">Reservar / Book</button>
@@ -686,7 +743,7 @@ function openModal(eventId){
     ${currentEvent.time} · Hotel Diez Treinta y Seis Rooftop<br>
     ${currentEvent.role.emoji} ${currentEvent.role.label}: ${currentEvent.guest.name}
   `;
-  document.getElementById('ticketType').value = 'general';
+  document.getElementById('ticketType').value = 'mujer';
   document.getElementById('qty').value = 1;
   document.getElementById('guestName').value = '';
   document.getElementById('guestEmail').value = '';
@@ -703,7 +760,7 @@ function updateTotal(){
   const type = document.getElementById('ticketType').value;
   const qty = Math.max(1, parseInt(document.getElementById('qty').value || '1', 10));
   const total = TICKET_PRICES[type] * qty;
-  document.getElementById('totalPrice').textContent = '$' + total;
+  document.getElementById('totalPrice').textContent = COP.format(total);
 }
 
 function showError(msg){
@@ -781,7 +838,6 @@ async function handleReturnFromStripe(){
 
     const ticket = ticketFromSession(data);
     saveTicket(ticket);
-    renderMyTickets();   // list first, so a display hiccup can't lose the ticket
     showTicket(ticket);
   } catch (err) {
     console.error('Could not confirm payment', err);
@@ -799,7 +855,7 @@ function ticketFromSession(s){
     guestHost: m.guestHost || 'Por anunciar / TBA',
     holderName: m.holderName || '',
     holderEmail: s.email || '',
-    ticketType: m.ticketType === 'vip' ? 'vip' : 'general',
+    ticketType: m.ticketType === 'hombre' ? 'hombre' : 'mujer',
     qty: s.qty,
     total: s.total,
     purchasedAt: new Date().toISOString()
@@ -838,10 +894,10 @@ function showTicket(t){
         <div class="meta">
           <strong>${t.eventTitle}</strong><br>
           ${formatDate(eventDate)}${t.eventTime ? ' · ' + t.eventTime : ''}<br>
-          Guest: ${t.role} — ${t.guestHost}<br>
+          ${t.guestHost}<br>
           Holder: ${t.holderName}<br>
-          Type: ${t.ticketType === 'vip' ? 'VIP Terraza' : 'Círculo General'} × ${t.qty}<br>
-          Total paid: $${t.total}<br>
+          ${TICKET_LABELS[t.ticketType] || 'Entrada'} × ${t.qty}<br>
+          Pagado: ${COP.format(t.total)}<br>
           <span class="id">${t.id}</span>
         </div>
       </div>
@@ -853,9 +909,9 @@ function showTicket(t){
 }
 
 /* =========================================================
-   PERSISTENCE — localStorage, so "Mis Entradas" survives a reload.
-   Stripe remains the source of truth for what was actually paid; this is only
-   the buyer's copy of the ticket on the device they bought it on.
+   PERSISTENCE — localStorage. Nothing is displayed from it any more; it exists
+   only so reloading the Stripe success URL can't issue the same ticket twice.
+   Stripe is the record of who paid.
    ========================================================= */
 const TICKETS_KEY = 'dayf_tickets';
 
@@ -871,36 +927,6 @@ function saveTicket(t){
   localStorage.setItem(TICKETS_KEY, JSON.stringify(all));
 }
 
-function renderMyTickets(){
-  const all = loadTickets();
-  const container = document.getElementById('ticketsList');
-  if (!all.length){
-    container.innerHTML = '<p class="empty-state">No tickets yet — book a party above and it\'ll show up here.</p>';
-    return;
-  }
-  container.innerHTML = all.slice().reverse().map(t => {
-    const eventDate = new Date(t.eventDate);
-    return `
-    <div class="ticket">
-      <div>
-        <h3>DANZAS ANCESTRALES Y FUTURISTAS</h3>
-        <div class="meta">
-          <strong>${t.eventTitle}</strong><br>
-          ${formatDate(eventDate)}${t.eventTime ? ' · ' + t.eventTime : ''}<br>
-          Guest: ${t.role} — ${t.guestHost}<br>
-          Holder: ${t.holderName}<br>
-          Type: ${t.ticketType === 'vip' ? 'VIP Terraza' : 'Círculo General'} × ${t.qty}<br>
-          Total paid: $${t.total}<br>
-          <span class="id">${t.id}</span>
-        </div>
-      </div>
-      <div class="qr" id="mine-${t.id}"></div>
-    </div>`;
-  }).join('');
-
-  all.forEach(t => renderQr(document.getElementById('mine-' + t.id), t));
-}
-renderMyTickets();
 handleReturnFromStripe();
 </script>
 </body>

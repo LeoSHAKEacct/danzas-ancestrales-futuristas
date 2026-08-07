@@ -16,9 +16,11 @@ function getStripe(){
   return require('stripe')(process.env.STRIPE_SECRET_KEY);
 }
 
-const CURRENCY = 'usd';
-const PRICES = { general: 1500, vip: 3500 }; // in cents
-const LABELS = { general: 'Círculo General', vip: 'VIP Terraza' };
+/* Colombian pesos. COP is NOT a zero-decimal currency in Stripe, so amounts
+   are in centavos: 25.000 COP => 2_500_000. */
+const CURRENCY = 'cop';
+const PRICES = { hombre: 2500000, mujer: 1200000 };
+const LABELS = { hombre: 'Entrada Hombre', mujer: 'Entrada Mujer' };
 const MAX_QTY = 8;
 
 function clean(value, max) {
@@ -45,7 +47,7 @@ module.exports = async (req, res) => {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
 
-    const type = body.ticketType === 'vip' ? 'vip' : 'general';
+    const type = body.ticketType === 'hombre' ? 'hombre' : 'mujer';
     const qty = Math.min(MAX_QTY, Math.max(1, parseInt(body.qty, 10) || 1));
     const name = clean(body.name, 120);
     const email = clean(body.email, 200);
