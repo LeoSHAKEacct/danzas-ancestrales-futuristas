@@ -32,8 +32,13 @@ module.exports = async (req, res) => {
   }
 
   if (!process.env.STRIPE_SECRET_KEY) {
+    // Also report whether the dependency resolved, so this endpoint answers
+    // "will checkout work once I paste the key?" without a key being present.
+    let stripeInstalled = true;
+    try { require.resolve('stripe'); } catch (e) { stripeInstalled = false; }
     return res.status(500).json({
-      error: 'Stripe no está configurado / Stripe is not configured yet — add STRIPE_SECRET_KEY to this project on Vercel.'
+      error: 'Stripe no está configurado / Stripe is not configured yet — add STRIPE_SECRET_KEY to this project on Vercel.',
+      stripeInstalled
     });
   }
 
