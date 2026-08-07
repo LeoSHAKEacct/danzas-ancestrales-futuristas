@@ -8,7 +8,8 @@ Rooftop event site for **Hotel Diez Treinta y Seis** (Provenza, El Poblado, Mede
 index.html           # the entire front end (HTML/CSS/JS, no build step)
 api/checkout.js      # POST — creates a Stripe Checkout Session, returns its URL
 api/session.js       # GET  — reads a session back to confirm payment before issuing a ticket
-package.json         # the `stripe` dependency for the two functions above
+api/luma.js          # GET  — registered count for a Luma event (optional)
+package.json         # the `stripe` dependency for the functions above
 assets/img/
   logo-10-13.jpg     # hotel logo
   cyber-indio.png    # hero illustration
@@ -25,6 +26,18 @@ Payments run through **Stripe Checkout** — Stripe hosts the payment page, so n
 3. Redeploy. Booking now redirects to Stripe and back.
 
 Ticket **prices are set server-side** in `api/checkout.js` (`PRICES`, in cents) so the browser can't change what it's charged. The copies in `index.html` (`TICKET_PRICES`, the pricing section, the `<select>` labels) are display only — change both.
+
+## Luma attendee count (optional)
+
+Each party card can show how many people registered on Luma, alongside its own ticket sales.
+
+1. Create the event on Luma and copy its event id (`evt-…`).
+2. Paste it into that party's `lumaEventId` in the `SCHEDULE` array in `index.html`.
+3. Add `LUMA_API_KEY` to the Vercel environment variables — this needs a **Luma Plus** subscription, since the API is a paid feature.
+
+`api/luma.js` calls `GET https://public-api.luma.com/v1/events/get` and returns **counts only** — no guest names or emails ever reach the browser. Every failure path (no key, no event id, Luma down) is silent by design: the card just keeps showing its default text instead of an error.
+
+Note this leaves **two** places people can buy: Luma and this site's Stripe checkout. Neither knows about the other, so the door list is Stripe's dashboard *plus* Luma's guest list until one becomes the single source of truth.
 
 ## Deploying
 
@@ -63,5 +76,5 @@ git push -u origin main
 - **Tickets are only issued after Stripe confirms payment.** Stripe redirects the buyer back to `/?paid=1&session_id=…`; the page asks `api/session.js` whether that session is really `paid`, and only then generates the QR ticket and saves it to `localStorage` under `dayf_tickets`.
 - `localStorage` is the *buyer's* copy, on one device. Stripe's dashboard is the real record of who paid — the event's guest list lives there (each payment carries the event title, date, ticket type, and buyer name in its metadata).
 - The QR encodes `DAYF-TICKET|id|holder|date`. Nothing validates it at the door yet; scanning is visual for now.
-- Schedule and host bios are hardcoded in the `<script>` block near the bottom of `index.html` (`SCHEDULE`, `ROLE_POOL`) — update them there as the lineup changes. Current lineup: **Sun 16 Aug 2026, 00:00–02:00, Ecstatic Dance** (guest TBA), then 31 Aug 2026 TBA.
-- Not built yet: emailed tickets (Stripe's own receipt is all the buyer gets by email), a real spots-left counter (`spotsLeft: 40` is decorative), and door-side QR validation.
+- Schedule and host bios are hardcoded in the `<script>` block near the bottom of `index.html` (`SCHEDULE`, `ROLE_POOL`) — update them there as the lineup changes. Current lineup: **Sun 16 Aug 2026, 12:00 midday until 02:00** (i.e. running into Monday), Ecstatic Dance, guest TBA; then 31 Aug 2026 TBA.
+- Not built yet: emailed tickets (Stripe's own receipt is all the buyer gets by email), a real capacity limit (`spotsLeft: 40` is decorative — nothing stops a 41st sale), and door-side QR validation.

@@ -403,7 +403,7 @@
   <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</p>
   <p>Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
-  <p>Cada 15 días · Próxima: domingo 16 de agosto, 00:00 – 02:00 · All levels, all bodies, all cultures welcome.</p>
+  <p>Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00 · All levels, all bodies, all cultures welcome.</p>
   <p>To book / more info: <a href="https://wa.me/573223140283" style="color:var(--mustard);">WhatsApp +57 322 314 0283</a></p>
   <p class="fine">Pagos procesados de forma segura por Stripe · Payments securely processed by Stripe. Tu entrada con código QR se genera al confirmarse el pago.</p>
 </footer>
@@ -518,21 +518,23 @@ function roleByKey(key){ return ROLE_POOL.find(r => r.key === key); }
 const SCHEDULE = [
   {
     id:'party-1',
-    date: new Date('2026-08-16T00:00:00'),
-    time: '00:00 – 02:00',
+    date: new Date('2026-08-16T12:00:00'),
+    time: '12:00 mediodía – 02:00 madrugada',
     title: 'Ecstatic Dance',
     role: roleByKey('mover'),
     guest: TBA_GUEST,
-    spotsLeft: 40
+    spotsLeft: 40,
+    lumaEventId: ''   // paste the Luma event id (evt-…) to show its live count
   },
   {
     id:'party-2',
-    date: new Date('2026-08-31T00:00:00'),
-    time: '00:00 – 02:00',
+    date: new Date('2026-08-31T12:00:00'),
+    time: '12:00 mediodía – 02:00 madrugada',
     title: 'Por anunciar / To be announced',
     role: roleByKey('mover'),
     guest: TBA_GUEST,
-    spotsLeft: 40
+    spotsLeft: 40,
+    lumaEventId: ''
   }
 ];
 
@@ -550,7 +552,7 @@ function renderSchedule(){
         <div class="bio">${ev.guest.bio}</div>
         <div class="price-row">
           <span class="price">from $${TICKET_PRICES.general}</span>
-          <span class="spots">${ev.spotsLeft} spots left</span>
+          <span class="spots" data-spots="${ev.id}">${ev.spotsLeft} spots left</span>
         </div>
         <button class="book-btn" onclick="openModal('${ev.id}')">Reservar / Book</button>
       </div>
@@ -558,6 +560,33 @@ function renderSchedule(){
   `).join('');
 }
 renderSchedule();
+
+/* =========================================================
+   LUMA — live registered count per party.
+   Purely additive: if there's no Luma event id, no API key on the server, or
+   Luma is having a bad day, the card keeps its normal text.
+   Only counts come back, never guest names or emails.
+   ========================================================= */
+async function loadLumaCounts(){
+  await Promise.all(SCHEDULE.filter(ev => ev.lumaEventId).map(async ev => {
+    try {
+      const res = await fetch('/api/luma?event_id=' + encodeURIComponent(ev.lumaEventId));
+      if (!res.ok) return;
+      const data = await res.json();
+      if (!data.configured || typeof data.going !== 'number') return;
+
+      const el = document.querySelector(`[data-spots="${ev.id}"]`);
+      if (!el) return;
+      const left = Math.max(0, ev.spotsLeft - data.going);
+      el.textContent = data.going === 1
+        ? `1 registrado · ${left} cupos`
+        : `${data.going} registrados · ${left} cupos`;
+    } catch (err) {
+      console.warn('Luma count unavailable', err);
+    }
+  }));
+}
+loadLumaCounts();
 
 /* =========================================================
    BOOKING MODAL
