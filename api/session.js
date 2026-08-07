@@ -3,7 +3,10 @@
  * Reads back a Checkout Session after Stripe redirects the buyer home, so the
  * ticket is only ever issued for a payment Stripe actually confirms.
  */
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+/* Lazy on purpose — see the note in checkout.js. */
+function getStripe(){
+  return require('stripe')(process.env.STRIPE_SECRET_KEY);
+}
 
 module.exports = async (req, res) => {
   if (req.method !== 'GET') {
@@ -21,7 +24,7 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const session = await stripe.checkout.sessions.retrieve(id, { expand: ['line_items'] });
+    const session = await getStripe().checkout.sessions.retrieve(id, { expand: ['line_items'] });
     const item = session.line_items && session.line_items.data[0];
 
     return res.status(200).json({

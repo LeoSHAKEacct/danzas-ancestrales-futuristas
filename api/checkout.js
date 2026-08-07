@@ -9,7 +9,12 @@
  * ticket type and how many, never an amount. Keep these in sync with the
  * TICKET_PRICES object in index.html (that one is display-only).
  */
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+/* Built per request, not at import time: constructing the client at module
+   scope crashes the whole function with an opaque 500 when the key is missing,
+   which hides the very message that tells you the key is missing. */
+function getStripe(){
+  return require('stripe')(process.env.STRIPE_SECRET_KEY);
+}
 
 const CURRENCY = 'usd';
 const PRICES = { general: 1500, vip: 3500 }; // in cents
@@ -59,7 +64,7 @@ module.exports = async (req, res) => {
       holderName: name
     };
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
       customer_email: email,
       line_items: [{
@@ -83,6 +88,9 @@ module.exports = async (req, res) => {
     return res.status(200).json({ url: session.url });
   } catch (err) {
     console.error('checkout error', err);
+    if (err && err.code === 'MODULE_NOT_FOUND') {
+      return res.status(500).json({ error: 'The stripe package is not installed in this deployment.' });
+    }
     return res.status(500).json({ error: err.message || 'Stripe error' });
   }
 };
