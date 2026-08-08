@@ -80,6 +80,19 @@
   .nav-cta{
     background:var(--mustard); color:var(--wine)!important; padding:8px 18px; border-radius:30px;
   }
+  .nav-right{ display:flex; align-items:center; gap:14px; }
+  .lang-switch{
+    display:flex; border:1.5px solid rgba(251,239,219,.45); border-radius:999px; overflow:hidden;
+  }
+  .lang-switch button{
+    background:none; border:none; color:var(--cream); font-family:'Poppins',sans-serif;
+    font-weight:600; font-size:.76rem; letter-spacing:.5px; padding:6px 11px; cursor:pointer;
+    transition:.15s;
+  }
+  .lang-switch button:hover{ background:rgba(251,239,219,.14); }
+  .lang-switch button[aria-pressed="true"]{ background:var(--mustard); color:var(--wine); }
+  footer .wa-number{ font-size:1.05rem; font-weight:700; letter-spacing:.5px; margin:14px auto; }
+  footer .wa-number a{ text-decoration:none; }
   @media (max-width:820px){ nav ul{ display:none; } }
 
   /* ---------- HERO ---------- */
@@ -228,12 +241,28 @@
   .about-grid{
     max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
   }
+  /* The whole video frame stays visible; a circular spotlight lifts the middle
+     and everything outside it fades into the section background. */
   .about-grid .art{
-    aspect-ratio:1/1; border-radius:50%; overflow:hidden;
-    border:8px solid var(--wine); position:relative; box-shadow:8px 8px 0 rgba(122,31,43,.18);
+    aspect-ratio:3/4; position:relative; overflow:visible;
+    display:flex; align-items:center; justify-content:center;
   }
   .about-grid .art img,
-  .about-grid .art video{ width:100%; height:100%; object-fit:cover; display:block; }
+  .about-grid .art video{
+    width:100%; height:100%; object-fit:contain; display:block; border-radius:12px;
+  }
+  /* radius 30% of width == 22.5% of height at 3/4, so the hole is a true circle */
+  .about-grid .art .spotlight{
+    position:absolute; inset:0; pointer-events:none;
+    background:radial-gradient(ellipse 30% 22.5% at 50% 50%,
+      rgba(245,227,196,0) 98%, rgba(245,227,196,.82) 100%);
+  }
+  .about-grid .art .ring{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:60%; aspect-ratio:1; border-radius:50%;
+    border:8px solid var(--wine); pointer-events:none;
+    box-shadow:0 14px 34px rgba(122,31,43,.28);
+  }
   .about-grid .art .credit{
     position:absolute; bottom:10px; right:14px; font-size:.62rem; color:#fff; opacity:.75;
     text-shadow:0 1px 3px rgba(0,0,0,.6); font-family:'Poppins',sans-serif;
@@ -358,46 +387,76 @@
     align-items:center; justify-content:center; padding:20px;
   }
   .modal-overlay.active{ display:flex; }
+  /* Frosted panel holding white cards — the app's "Shakers nearby" look. */
   .modal{
-    background:var(--cream); border-radius:20px; max-width:480px; width:100%; max-height:88vh; overflow-y:auto;
-    border:4px solid var(--wine); position:relative; padding:32px;
+    background:rgba(238,238,240,.82);
+    -webkit-backdrop-filter:blur(22px) saturate(1.3);
+    backdrop-filter:blur(22px) saturate(1.3);
+    border-radius:26px; max-width:480px; width:100%; max-height:88vh; overflow-y:auto;
+    border:none; position:relative; padding:26px 22px 24px;
+    box-shadow:0 24px 60px rgba(0,0,0,.28);
+    color:#111;
   }
   .modal-close{
-    position:absolute; top:14px; right:18px; background:none; border:none; font-size:1.6rem; cursor:pointer; color:var(--wine);
+    position:absolute; top:18px; right:20px; background:none; border:none;
+    font-size:1.5rem; line-height:1; cursor:pointer; color:#666;
   }
-  .modal h2{ color:var(--wine); margin-top:0; font-size:1.7rem; }
+  .modal-close:hover{ color:#111; }
+  .modal h2{ color:#111; margin:0 0 18px; font-size:1.45rem; letter-spacing:-.3px; }
   .modal .event-summary{
-    background:var(--parchment); border-radius:12px; padding:14px 16px; margin-bottom:20px; font-size:.9rem;
+    background:#fff; border-radius:18px; padding:16px 18px; margin-bottom:18px;
+    font-size:.88rem; line-height:1.55; color:#111;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
   }
-  .modal label{ display:block; font-weight:600; font-size:.85rem; margin:14px 0 6px; }
+  .modal label{ display:block; font-weight:600; font-size:.82rem; margin:16px 0 7px; color:#333; }
   .modal input, .modal select{
-    width:100%; padding:11px 13px; border-radius:8px; border:2px solid #d8c6a3; font-family:'Poppins',sans-serif; font-size:.9rem;
+    width:100%; padding:15px 16px; border-radius:16px; border:none; background:#fff; color:#111;
+    font-family:'Poppins',sans-serif; font-size:.95rem;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
+    -webkit-appearance:none; appearance:none;
   }
+  .modal select{
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23888'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center; background-size:20px;
+    padding-right:42px;
+  }
+  .modal input:focus, .modal select:focus{ outline:2px solid rgba(0,0,0,.35); outline-offset:1px; }
   .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .modal .total{ display:flex; justify-content:space-between; font-weight:700; font-size:1.1rem; margin:20px 0; color:var(--wine); }
-  .pay-btn{
-    width:100%; background:var(--terracotta); color:var(--cream); border:none; padding:15px; border-radius:10px;
-    font-weight:700; font-size:1rem; cursor:pointer;
+  .modal .total{
+    display:flex; justify-content:space-between; align-items:center;
+    background:#fff; border-radius:18px; padding:16px 18px; margin:20px 0 14px;
+    font-weight:700; font-size:1.05rem; color:#111;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
   }
-  .pay-btn:hover{ background:var(--wine); }
-  .pay-btn[disabled]{ opacity:.6; cursor:progress; }
-  .error-msg{ color:var(--wine); background:#fbdada; border-radius:8px; padding:8px 12px; font-size:.8rem; margin-top:10px; display:none;}
-  .demo-note{ font-size:.72rem; opacity:.6; margin-top:14px; text-align:center; }
+  .pay-btn{
+    width:100%; background:#111; color:#fff; border:none; padding:17px; border-radius:18px;
+    font-weight:600; font-size:1rem; cursor:pointer; font-family:'Poppins',sans-serif;
+    transition:.18s;
+  }
+  .pay-btn:hover{ background:#333; }
+  .pay-btn[disabled]{ opacity:.55; cursor:progress; }
+  .error-msg{
+    color:#8a1c1c; background:#fff; border-radius:14px; padding:12px 14px; font-size:.82rem;
+    margin-top:12px; display:none; box-shadow:0 2px 10px rgba(0,0,0,.06);
+  }
+  .demo-note{ font-size:.72rem; color:#666; margin-top:14px; text-align:center; line-height:1.5; }
   .promo-note{
-    background:rgba(242,183,5,.18); border:1px dashed var(--mustard); border-radius:10px;
-    padding:9px 12px; font-size:.78rem; margin-top:8px; line-height:1.45;
+    background:#fff; border:none; border-radius:16px;
+    padding:13px 15px; font-size:.8rem; margin-top:10px; line-height:1.5; color:#333;
+    box-shadow:0 2px 10px rgba(0,0,0,.06);
   }
 
   /* ---------- TICKET ---------- */
   .ticket{
-    border:1px dashed rgba(0,0,0,.35); border-radius:14px; padding:22px;
-    background:rgba(43,27,18,.05); color:#000;
-    display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center;
+    border:none; border-radius:20px; padding:20px;
+    background:#fff; color:#111;
+    box-shadow:0 2px 12px rgba(0,0,0,.08);
+    display:grid; grid-template-columns:1fr auto; gap:18px; align-items:center;
   }
-  .ticket h3{ margin:0 0 6px; color:#000; font-size:1.05rem; letter-spacing:0; }
-  .ticket .meta{ font-size:.82rem; line-height:1.6; color:#000; }
+  .ticket h3{ margin:0 0 8px; color:#111; font-size:.95rem; letter-spacing:-.2px; line-height:1.25; }
+  .ticket .meta{ font-size:.82rem; line-height:1.65; color:#333; }
   .ticket .qr{ width:110px; height:110px; }
-  .ticket .id{ font-family:monospace; font-size:.78rem; opacity:.7; }
+  .ticket .id{ font-family:monospace; font-size:.76rem; color:#888; }
 
   /* ---------- MY TICKETS ---------- */
   .empty-state{ text-align:center; opacity:.6; font-size:.95rem; }
@@ -425,7 +484,69 @@
     box-shadow:0 4px 14px rgba(0,0,0,.3); text-decoration:none; flex-shrink:0;
   }
   .whatsapp-float .bubble svg{ width:30px; height:30px; }
-  @media (max-width:480px){ .whatsapp-float .label{ display:none; } }
+
+  /* =========================================================
+     MOBILE — one readable column, nothing wider than the screen.
+     ========================================================= */
+  html, body{ max-width:100%; overflow-x:hidden; }
+
+  @media (max-width:820px){
+    /* the brand was nowrap at 391px, which is what pushed the whole page sideways */
+    nav{ flex-wrap:wrap; justify-content:center; gap:10px; padding:12px 16px; }
+    nav .brand{
+      white-space:normal; width:100%; text-align:center;
+      font-size:.86rem; line-height:1.35; letter-spacing:0;
+    }
+    .nav-right{ width:100%; justify-content:center; }
+    .nav-cta{ padding:8px 20px; font-size:.86rem; }
+  }
+
+  @media (max-width:600px){
+    section{ padding:56px 20px; }
+    .section-title{ font-size:clamp(1.6rem, 8vw, 2.2rem); line-height:1.2; }
+    .section-sub{ font-size:.92rem; }
+
+    .hero{ min-height:auto; padding:44px 0 52px; }
+    .hero-inner{ gap:22px; padding:0 20px; }
+    .hero h1{ font-size:clamp(1.7rem, 9vw, 2.4rem); }
+    .hero-character{ width:min(240px, 62vw); }
+    .hero .subtitle-es{ font-size:1.2rem; margin-bottom:16px; }
+    .hero .subtitle{ font-size:1.1rem; }
+    .hero p.desc{ font-size:.95rem; line-height:1.7; margin-bottom:24px; }
+    .hero-actions{ flex-direction:column; align-items:stretch; gap:12px; }
+    .hero-actions .btn{ width:100%; text-align:center; padding:14px 20px; }
+
+    /* single column, and the video circle stops eating the screen */
+    .about-grid{ grid-template-columns:1fr; gap:26px; }
+    .about-grid .art{ max-width:330px; margin:0 auto; width:100%; }
+    .about-grid p{ font-size:.95rem; line-height:1.7; }
+    .about-grid .es{ font-size:1.05rem; }
+
+    .cards{ grid-template-columns:1fr; gap:20px; }
+    .card .event-title{ font-size:1.12rem; }
+
+    .lineup-list{ padding:0 2px; }
+    .slot{ padding:14px 2px; }
+    .slot .act{ font-size:1.08rem; }
+
+    .tiers{ flex-direction:column; align-items:stretch; gap:18px; }
+    .tier{ min-width:0; width:100%; padding:22px 20px; }
+    .tier-promo{ font-size:.85rem; padding:13px 16px; }
+
+    footer{ padding:44px 20px 22px; }
+    footer p{ font-size:.85rem; }
+
+    .modal{ padding:22px 16px 20px; border-radius:22px; max-height:90vh; }
+    .modal h2{ font-size:1.25rem; }
+    .ticket{ grid-template-columns:1fr; justify-items:center; text-align:center; gap:14px; }
+
+    /* the floating buttons shrink so they never crowd the thumb zone */
+    .whatsapp-float{ right:14px; bottom:14px; gap:8px; }
+    .whatsapp-float .loc-logo{ height:32px; width:32px; }
+    .whatsapp-float .pin{ width:17px; height:17px; }
+    .whatsapp-float .bubble{ width:50px; height:50px; }
+    .whatsapp-float .bubble svg{ width:26px; height:26px; }
+  }
 </style>
 </head>
 <body>
@@ -433,12 +554,18 @@
 <nav>
   <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <ul>
-    <li><a href="#about">La Movida</a></li>
-    <li><a href="#schedule">Fiestas / Parties</a></li>
-    <li><a href="#lineup">Line-up</a></li>
-    <li><a href="#pricing">Entradas</a></li>
+    <li><a href="#about" data-i18n="nav.about">La Movida</a></li>
+    <li><a href="#schedule" data-i18n="nav.parties">Fiestas</a></li>
+    <li><a href="#lineup" data-i18n="nav.lineup">Line-up</a></li>
+    <li><a href="#pricing" data-i18n="nav.tickets">Entradas</a></li>
   </ul>
-  <a href="#schedule" class="nav-cta">Reserva ahora</a>
+  <div class="nav-right">
+    <div class="lang-switch" role="group" aria-label="Idioma / Language">
+      <button type="button" data-lang="es">ES</button>
+      <button type="button" data-lang="en">EN</button>
+    </div>
+    <a href="#schedule" class="nav-cta" data-i18n="nav.cta">Reserva ahora</a>
+  </div>
 </nav>
 
 <header class="hero">
@@ -451,12 +578,12 @@
         </div>
       </div>
       <div class="hero-left">
-        <div class="subtitle-es">A social-gathering to celebrate life</div>
-        <div class="subtitle">Rooftop Sessions</div>
-        <p class="desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
+        <div class="subtitle-es" data-i18n="hero.tagline">A social-gathering to celebrate life</div>
+        <div class="subtitle" data-i18n="hero.kicker">Rooftop Sessions</div>
+        <p class="desc" data-i18n="hero.desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
         <div class="hero-actions">
-          <a href="#schedule" class="btn btn-primary">Ver próximas fiestas</a>
-          <a href="#about" class="btn btn-outline">La Movida ↓</a>
+          <a href="#schedule" class="btn btn-primary" data-i18n="hero.btnParties">Ver próximas fiestas</a>
+          <a href="#about" class="btn btn-outline" data-i18n="hero.btnAbout">La Movida ↓</a>
         </div>
       </div>
     </div>
@@ -465,16 +592,18 @@
 <div class="scallop-top"></div>
 
 <section class="about" id="about">
-  <h2 class="section-title">El Círculo del Sol</h2>
-  <div class="section-sub">"Todos somos raíz, todos somos sol"</div>
+  <h2 class="section-title" data-i18n="about.title">El Círculo del Sol</h2>
+  <div class="section-sub" data-i18n="about.quote">"Todos somos raíz, todos somos sol"</div>
   <div class="about-grid">
     <div class="art">
       <video src="assets/video/danza.mp4" poster="assets/video/danza-poster.jpg"
              autoplay muted loop playsinline preload="metadata"
              aria-label="Baile en la azotea"></video>
+      <span class="spotlight" aria-hidden="true"></span>
+      <span class="ring" aria-hidden="true"></span>
     </div>
     <div>
-      <p class="es">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
+      <p class="es" data-i18n="about.p1">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
       <p>DANZAS ANCESTRALES Y FUTURISTAS is our rooftop's answer to Woodstock: barefoot, sun-drunk, community-first gatherings held on the Hotel Diez Treinta y Seis terrace every 15 days. No headliners, no hierarchy — just a rotating circle of guests who hold space differently each time: a dancer one week, a movement activator the next, a yoga facilitator or live musician after that. Some sessions lean into wellness practices, others into games and play — it varies every 15 days, and everyone is welcome: digital nomads, Medellín residents, and the simply curious.</p>
       <p>Tickets include rooftop and pool access, one welcome drink, and a guided opening circle. Daylight hours run on vibe-coding sessions and co-working before the music takes over. Come as you are — flowers, fringe, and good energy encouraged.</p>
     </div>
@@ -483,23 +612,23 @@
 
 <div class="scallop-bottom"></div>
 <section class="schedule" id="schedule">
-  <h2 class="section-title galaxy-text">Próximas Fiestas</h2>
-  <div class="section-sub">Every 15 days · Rotating dancer / mover / facilitator</div>
+  <h2 class="section-title galaxy-text" data-i18n="sched.title">Próximas Fiestas</h2>
+  <div class="section-sub" data-i18n="sched.sub">Every 15 days · Rotating dancer / mover / facilitator</div>
   <div class="cards" id="cardsContainer"></div>
 </section>
 
 <section class="lineup" id="lineup">
-  <h2 class="section-title">Line-up</h2>
+  <h2 class="section-title" data-i18n="lineup.title">Line-up</h2>
   <div class="section-sub" id="lineupSub"></div>
   <div class="lineup-list" id="lineupList"></div>
 </section>
 
 <section class="pricing" id="pricing">
-  <h2 class="section-title">Entradas</h2>
-  <div class="section-sub">Simple pricing, big energy</div>
+  <h2 class="section-title" data-i18n="price.title">Entradas</h2>
+  <div class="section-sub" data-i18n="price.sub">Simple pricing, big energy</div>
   <div class="tiers">
     <div class="tier">
-      <h3>Mujer</h3>
+      <h3 data-i18n="price.women">Mujer</h3>
       <div class="p">$12.000</div>
       <ul>
         <li>Acceso a la azotea y la piscina, sesión completa</li>
@@ -509,7 +638,7 @@
       </ul>
     </div>
     <div class="tier">
-      <h3>Hombre</h3>
+      <h3 data-i18n="price.men">Hombre</h3>
       <div class="p">$25.000</div>
       <ul>
         <li>Acceso a la azotea y la piscina, sesión completa</li>
@@ -519,45 +648,45 @@
       </ul>
     </div>
   </div>
-  <p class="tier-promo">🌸 Una chica que venga con 2 amigas <strong>entra gratis</strong> — se aplica en la puerta. Precios en pesos colombianos.</p>
+  <p class="tier-promo" data-i18n-html="price.promo">🌸 Una chica que venga con 2 amigas <strong>entra gratis</strong> — se aplica en la puerta. Precios en pesos colombianos.</p>
 </section>
 
 <footer>
   <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo"><a href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" style="color:var(--mustard);">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</a></p>
-  <p>Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
-  <p>Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00 · All levels, all bodies, all cultures welcome.</p>
-  <p>To book / more info: <a href="https://wa.me/573223140283" style="color:var(--mustard);">WhatsApp +57 322 314 0283</a></p>
-  <p class="fine">Pagos procesados de forma segura por Stripe · Payments securely processed by Stripe. Tu entrada con código QR se genera al confirmarse el pago.</p>
+  <p data-i18n="footer.tagline">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
+  <p data-i18n="footer.next">Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00</p>
+  <p class="wa-number"><a href="https://wa.me/573223140283">+57 322 314 0283</a></p>
+  <p class="fine" data-i18n="footer.stripe">Pagos procesados de forma segura por Stripe. Tu entrada con código QR se genera al confirmarse el pago.</p>
 </footer>
 
 <!-- BOOKING MODAL -->
 <div class="modal-overlay" id="bookingModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <h2>Reserva tu lugar</h2>
+    <h2 data-i18n="modal.title">Reserva tu lugar</h2>
     <div class="event-summary" id="eventSummary"></div>
 
-    <label>Tipo de entrada / Ticket type</label>
+    <label data-i18n="modal.typeLabel">Tipo de entrada</label>
     <select id="ticketType">
-      <option value="mujer">Mujer — $12.000 COP</option>
-      <option value="hombre">Hombre — $25.000 COP</option>
+      <option value="mujer" data-i18n="modal.optWoman">Mujer — $12.000 COP</option>
+      <option value="hombre" data-i18n="modal.optMan">Hombre — $25.000 COP</option>
     </select>
-    <div class="promo-note">🌸 Una chica que venga con 2 amigas entra <strong>gratis</strong> — se aplica en la puerta.</div>
+    <div class="promo-note" data-i18n-html="modal.promo">🌸 Una chica que venga con 2 amigas entra <strong>gratis</strong> — se aplica en la puerta.</div>
 
-    <label>Quantity / Cantidad</label>
+    <label data-i18n="modal.qtyLabel">Cantidad</label>
     <input type="number" id="qty" min="1" max="8" value="1">
 
-    <label>Full name / Nombre completo</label>
+    <label data-i18n="modal.nameLabel">Nombre completo</label>
     <input type="text" id="guestName" placeholder="Lola García">
 
-    <label>Email</label>
+    <label data-i18n="modal.emailLabel">Email</label>
     <input type="email" id="guestEmail" placeholder="lola@email.com">
 
-    <div class="total"><span>Total</span><span id="totalPrice">$ 12.000</span></div>
+    <div class="total"><span data-i18n="modal.total">Total</span><span id="totalPrice">$ 12.000</span></div>
     <div class="error-msg" id="errorMsg"></div>
-    <button class="pay-btn" id="payBtn" onclick="startCheckout()">Pagar con Stripe / Pay &amp; Book</button>
-    <div class="demo-note">🔒 Pago seguro con Stripe — te llevamos a la página de pago de Stripe y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.</div>
+    <button class="pay-btn" id="payBtn" onclick="startCheckout()" data-i18n="modal.pay">Pagar con Stripe</button>
+    <div class="demo-note" data-i18n="modal.secure">🔒 Pago seguro con Stripe — te llevamos a la página de pago de Stripe y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.</div>
   </div>
 </div>
 
@@ -565,10 +694,10 @@
 <div class="modal-overlay" id="ticketModal">
   <div class="modal">
     <button class="modal-close" onclick="closeTicketModal()">×</button>
-    <h2>¡Reservado! You're in 🌻</h2>
+    <h2 data-i18n="ticket.title">¡Reservado! 🌻</h2>
     <div id="ticketContent"></div>
-    <div class="promo-note">📸 Guardá una captura de este código QR — Stripe te envía el recibo del pago por email, pero la entrada con QR vive acá.</div>
-    <button class="btn btn-primary" style="width:100%;text-align:center;margin-top:18px;" onclick="closeTicketModal()">Listo / Done</button>
+    <div class="promo-note" data-i18n="ticket.note">📸 Guardá una captura de este código QR — Stripe te envía el recibo del pago por email, pero la entrada con QR vive acá.</div>
+    <button class="btn btn-primary" style="width:100%;text-align:center;margin-top:18px;" onclick="closeTicketModal()" data-i18n="ticket.done">Listo</button>
   </div>
 </div>
 
@@ -585,6 +714,139 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
+/* =========================================================
+   I18N — Spanish / English. Static copy is tagged with data-i18n in the
+   markup; anything rendered by JS calls t() and is re-rendered on switch.
+   ========================================================= */
+const I18N = {
+  es: {
+    'nav.about':'La Movida', 'nav.parties':'Fiestas', 'nav.lineup':'Line-up',
+    'nav.tickets':'Entradas', 'nav.cta':'Reserva ahora',
+    'hero.tagline':'Un encuentro social para celebrar la vida',
+    'hero.kicker':'Rooftop Sessions',
+    'hero.desc':'Cada 15 días la azotea se convierte en un encuentro de espíritu libre — ritmo en vivo, bienestar, juegos, sesiones de vibe-coding, co-working y un elenco rotativo de bailarines, activadores de movimiento, facilitadores de yoga y músicos. Abierto a todas las culturas y procedencias: nómadas digitales, locales y curiosos por igual.',
+    'hero.btnParties':'Ver próximas fiestas', 'hero.btnAbout':'La Movida ↓',
+    'about.title':'El Círculo del Sol',
+    'about.quote':'"Todos somos raíz, todos somos sol"',
+    'about.p1':'Una experiencia botánica en la zona más icónica de Provenza, Poblado.',
+    'about.p2':'DANZAS ANCESTRALES Y FUTURISTAS es la respuesta de nuestra azotea a Woodstock: encuentros descalzos, soleados y comunitarios en la terraza del Hotel Diez Treinta y Seis cada 15 días. Sin headliners, sin jerarquías — solo un círculo rotativo de invitados que sostienen el espacio distinto cada vez: un bailarín una semana, un activador de movimiento la siguiente, un facilitador de yoga o un músico en vivo después. Algunas sesiones se inclinan al bienestar, otras al juego — varía cada 15 días, y todos son bienvenidos.',
+    'about.p3':'La entrada incluye acceso a la azotea y la piscina, una bebida de bienvenida y un círculo de apertura. Las horas de sol van de vibe-coding y co-working antes de que la música tome el mando. Vení como estés — flores, flecos y buena energía bienvenidos.',
+    'sched.title':'Próximas Fiestas',
+    'sched.sub':'Cada 15 días · Invitados rotativos',
+    'lineup.title':'Line-up',
+    'lineup.sub':'Puertas 12:00 del mediodía · Música desde las 15:00',
+    'price.title':'Entradas', 'price.sub':'Precios simples, energía grande',
+    'price.women':'Mujer', 'price.men':'Hombre',
+    'price.promo':'🌸 Una chica que venga con 2 amigas <strong>entra gratis</strong> — se aplica en la puerta. Precios en pesos colombianos.',
+    'price.b1':'Acceso a la azotea y la piscina, sesión completa',
+    'price.b2':'Bebida de bienvenida', 'price.b3':'Círculo de apertura',
+    'price.b4':'Vibe-coding y co-working de día',
+    'footer.tagline':'Una experiencia botánica en la zona más icónica de Provenza, Poblado.',
+    'footer.next':'Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00',
+    'footer.stripe':'Pagos procesados de forma segura por Stripe. Tu entrada con código QR se genera al confirmarse el pago.',
+    'modal.title':'Reserva tu lugar', 'modal.typeLabel':'Tipo de entrada',
+    'modal.qtyLabel':'Cantidad', 'modal.nameLabel':'Nombre completo', 'modal.emailLabel':'Email',
+    'modal.optWoman':'Mujer — $12.000 COP', 'modal.optMan':'Hombre — $25.000 COP',
+    'modal.promo':'🌸 Una chica que venga con 2 amigas entra <strong>gratis</strong> — se aplica en la puerta.',
+    'modal.total':'Total', 'modal.pay':'Pagar con Stripe', 'modal.connecting':'Conectando con Stripe…',
+    'modal.secure':'🔒 Pago seguro con Stripe — te llevamos a la página de pago y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.',
+    'ticket.title':'¡Reservado! 🌻',
+    'ticket.note':'📸 Guardá una captura de este código QR — Stripe te envía el recibo del pago por email, pero la entrada con QR vive acá.',
+    'ticket.done':'Listo',
+    'card.book':'Reservar', 'card.from':'desde', 'card.spots':'cupos disponibles',
+    'card.registered':'registrados', 'card.registered1':'registrado', 'card.spotsShort':'cupos',
+    'card.lineupOfDay':'Line-up del día',
+    'card.guestSummary':'Sanación sonora · Juego de conexión · 5 DJ sets',
+    'card.guestBio':'Sanación sonora, juego de conexión humana y música hasta las 2 am. Line-up completo más abajo.',
+    'card.tbaName':'Por anunciar', 'card.tbaBio':'Artista invitado se anuncia pronto — seguinos por WhatsApp.',
+    'card.tbaTitle':'Por anunciar',
+    'kind.sound':'Sanación sonora', 'kind.game':'Juego de conexión', 'kind.dj':'DJ set',
+    'link.listen':'Escuchar en SoundCloud', 'link.ig':'Instagram',
+    'err.name':'Ingresa tu nombre.', 'err.email':'Email inválido.',
+    'err.checkout':'No pudimos abrir el pago.',
+    'ticket.holder':'Titular', 'ticket.paid':'Pagado',
+    'time.label':'12:00 mediodía – 02:00 madrugada',
+    'venue':'Hotel Diez Treinta y Seis Rooftop'
+  },
+  en: {
+    'nav.about':'The Vibe', 'nav.parties':'Parties', 'nav.lineup':'Line-up',
+    'nav.tickets':'Tickets', 'nav.cta':'Book now',
+    'hero.tagline':'A social-gathering to celebrate life',
+    'hero.kicker':'Rooftop Sessions',
+    'hero.desc':'Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.',
+    'hero.btnParties':'See next parties', 'hero.btnAbout':'The Vibe ↓',
+    'about.title':'The Circle of the Sun',
+    'about.quote':'"We are all root, we are all sun"',
+    'about.p1':'A botanical experience in the most iconic corner of Provenza, Poblado.',
+    'about.p2':"DANZAS ANCESTRALES Y FUTURISTAS is our rooftop's answer to Woodstock: barefoot, sun-drunk, community-first gatherings held on the Hotel Diez Treinta y Seis terrace every 15 days. No headliners, no hierarchy — just a rotating circle of guests who hold space differently each time: a dancer one week, a movement activator the next, a yoga facilitator or live musician after that. Some sessions lean into wellness practices, others into games and play — it varies every 15 days, and everyone is welcome.",
+    'about.p3':'Tickets include rooftop and pool access, one welcome drink, and a guided opening circle. Daylight hours run on vibe-coding sessions and co-working before the music takes over. Come as you are — flowers, fringe, and good energy encouraged.',
+    'sched.title':'Next Parties',
+    'sched.sub':'Every 15 days · Rotating guests',
+    'lineup.title':'Line-up',
+    'lineup.sub':'Doors 12:00 midday · Music from 15:00',
+    'price.title':'Tickets', 'price.sub':'Simple pricing, big energy',
+    'price.women':'Women', 'price.men':'Men',
+    'price.promo':'🌸 A girl who brings 2 friends <strong>gets in free</strong> — applied at the door. Prices in Colombian pesos.',
+    'price.b1':'Rooftop & pool access, full session',
+    'price.b2':'Welcome drink', 'price.b3':'Opening circle',
+    'price.b4':'Vibe-coding & co-working by day',
+    'footer.tagline':'A botanical experience in the most iconic corner of Provenza, Poblado.',
+    'footer.next':'Every 15 days · Next: Sunday 16 August, 12:00 midday until 02:00',
+    'footer.stripe':'Payments securely processed by Stripe. Your QR ticket is issued once payment is confirmed.',
+    'modal.title':'Book your spot', 'modal.typeLabel':'Ticket type',
+    'modal.qtyLabel':'Quantity', 'modal.nameLabel':'Full name', 'modal.emailLabel':'Email',
+    'modal.optWoman':'Women — $12,000 COP', 'modal.optMan':'Men — $25,000 COP',
+    'modal.promo':'🌸 A girl who brings 2 friends gets in <strong>free</strong> — applied at the door.',
+    'modal.total':'Total', 'modal.pay':'Pay with Stripe', 'modal.connecting':'Connecting to Stripe…',
+    'modal.secure':'🔒 Secure payment with Stripe — we send you to their payment page and you come back with your ticket. Your card never touches this site.',
+    'ticket.title':"Booked! You're in 🌻",
+    'ticket.note':'📸 Screenshot this QR code — Stripe emails you the payment receipt, but the QR ticket lives here.',
+    'ticket.done':'Done',
+    'card.book':'Book', 'card.from':'from', 'card.spots':'spots left',
+    'card.registered':'registered', 'card.registered1':'registered', 'card.spotsShort':'spots',
+    'card.lineupOfDay':"Today's line-up",
+    'card.guestSummary':'Sound healing · Human-Connection game · 5 DJ sets',
+    'card.guestBio':'Sound healing, a human-connection game and music until 2 am. Full line-up below.',
+    'card.tbaName':'To be announced', 'card.tbaBio':'Guest artist announced soon — follow us on WhatsApp.',
+    'card.tbaTitle':'To be announced',
+    'kind.sound':'Sound healing', 'kind.game':'Connection game', 'kind.dj':'DJ set',
+    'link.listen':'Listen on SoundCloud', 'link.ig':'Instagram',
+    'err.name':'Please enter your name.', 'err.email':'Please enter a valid email.',
+    'err.checkout':'Could not open checkout.',
+    'ticket.holder':'Holder', 'ticket.paid':'Paid',
+    'time.label':'12:00 midday – 02:00',
+    'venue':'Hotel Diez Treinta y Seis Rooftop'
+  }
+};
+
+let LANG = localStorage.getItem('dayf_lang') || 'es';
+function t(key){ return (I18N[LANG] && I18N[LANG][key]) || I18N.es[key] || key; }
+
+function applyLang(){
+  document.documentElement.lang = LANG;
+  localStorage.setItem('dayf_lang', LANG);
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    el.innerHTML = t(el.dataset.i18nHtml);
+  });
+  document.querySelectorAll('.lang-switch button').forEach(b => {
+    b.setAttribute('aria-pressed', String(b.dataset.lang === LANG));
+  });
+
+  // Anything drawn by JS has to be rebuilt in the new language.
+  renderSchedule();
+  renderLineup();
+  loadLumaCounts();
+  if (currentEvent) fillEventSummary();
+}
+
+document.querySelectorAll('.lang-switch button').forEach(b => {
+  b.addEventListener('click', () => { LANG = b.dataset.lang; applyLang(); });
+});
+
 /* =========================================================
    SCHEDULE GENERATION — parties every 15 days, rotating guest role
    ========================================================= */
@@ -634,14 +896,22 @@ const ROLE_POOL = [
 /* Display prices only — the real amounts charged live in api/checkout.js.
    If you change a price, change it in BOTH places. Colombian pesos. */
 const TICKET_PRICES = { hombre: 25000, mujer: 12000 };
-const TICKET_LABELS = { hombre: 'Entrada Hombre', mujer: 'Entrada Mujer' };
+function ticketLabel(type){
+  return LANG === 'en'
+    ? (type === 'hombre' ? 'Men ticket' : 'Women ticket')
+    : (type === 'hombre' ? 'Entrada Hombre' : 'Entrada Mujer');
+}
 const COP = new Intl.NumberFormat('es-CO', { style:'currency', currency:'COP', maximumFractionDigits:0 });
 
-const TBA_GUEST = { name:'Por anunciar / TBA', bio:'Guest artist announced soon — follow us on WhatsApp for the reveal.' };
+const TBA_GUEST = { nameKey:'card.tbaName', bioKey:'card.tbaBio' };
 
 function formatDate(d){
-  return d.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+  return d.toLocaleDateString(LANG === 'en' ? 'en-GB' : 'es-ES',
+    { weekday:'long', day:'numeric', month:'long', year:'numeric' });
 }
+/* Guest/lineup copy is stored as i18n keys where it's translatable and as
+   plain strings where it's a proper name. */
+function txt(o, field){ return o[field + 'Key'] ? t(o[field + 'Key']) : o[field]; }
 
 function roleByKey(key){ return ROLE_POOL.find(r => r.key === key); }
 
@@ -649,25 +919,22 @@ const SCHEDULE = [
   {
     id:'party-1',
     date: new Date('2026-08-16T12:00:00'),
-    time: '12:00 mediodía – 02:00 madrugada',
+    timeKey: 'time.label',
     title: 'Networking. Pool-party & chill',
     role: roleByKey('mover'),
-    roleLabel: 'Line-up del día',
-    guest: {
-      name: 'Sound healing · Human-Connection game · 5 DJ sets',
-      bio: 'Sanación sonora, juego de conexión humana y música hasta las 2 am. Line-up completo más abajo.'
-    },
+    roleLabelKey: 'card.lineupOfDay',
+    guest: { nameKey:'card.guestSummary', bioKey:'card.guestBio' },
     lineup: [
-      { hour:'15:00 – 16:00', kind:'Sanación sonora', act:'Sound Healing' },
-      { hour:'17:00 – 18:00', kind:'Juego de conexión', act:'Human-Connection Game' },
-      { hour:'18:00 – 19:00', kind:'DJ set', act:'DJ Camilo' },
-      { hour:'19:00 – 21:00', kind:'DJ set', act:'DJ Leo' },
-      { hour:'21:00 – 22:30', kind:'DJ set', act:'DJ Tachi Ale',
-        link:'https://on.soundcloud.com/WTDURfMZsiy6rJytMd', linkLabel:'Escuchar en SoundCloud' },
-      { hour:'22:30 – 00:00', kind:'DJ set', act:'Violeta Villa',
-        link:'https://on.soundcloud.com/M75wkFnpHFRCidJn8', linkLabel:'Escuchar en SoundCloud' },
-      { hour:'00:00 – 02:00', kind:'DJ set', act:'DJ Soe Music',
-        link:'https://www.instagram.com/soe__music?igsh=NHF3ejVoZDcxbm1v', linkLabel:'Instagram' }
+      { hour:'15:00 – 16:00', kindKey:'kind.sound', act:'Sound Healing' },
+      { hour:'17:00 – 18:00', kindKey:'kind.game', act:'Human-Connection Game' },
+      { hour:'18:00 – 19:00', kindKey:'kind.dj', act:'DJ Camilo' },
+      { hour:'19:00 – 21:00', kindKey:'kind.dj', act:'DJ Leo' },
+      { hour:'21:00 – 22:30', kindKey:'kind.dj', act:'DJ Tachi Ale',
+        link:'https://on.soundcloud.com/WTDURfMZsiy6rJytMd', linkLabelKey:'link.listen' },
+      { hour:'22:30 – 00:00', kindKey:'kind.dj', act:'Violeta Villa',
+        link:'https://on.soundcloud.com/M75wkFnpHFRCidJn8', linkLabelKey:'link.listen' },
+      { hour:'00:00 – 02:00', kindKey:'kind.dj', act:'DJ Soe Music',
+        link:'https://www.instagram.com/soe__music?igsh=NHF3ejVoZDcxbm1v', linkLabelKey:'link.ig' }
     ],
     spotsLeft: 40,
     lumaEventId: ''   // paste the Luma event id (evt-…) to show its live count
@@ -675,8 +942,8 @@ const SCHEDULE = [
   {
     id:'party-2',
     date: new Date('2026-08-31T12:00:00'),
-    time: '12:00 mediodía – 02:00 madrugada',
-    title: 'Por anunciar / To be announced',
+    timeKey: 'time.label',
+    titleKey: 'card.tbaTitle',
     role: roleByKey('mover'),
     guest: TBA_GUEST,
     spotsLeft: 40,
@@ -690,21 +957,20 @@ function renderSchedule(){
     <div class="card">
       <span class="tag">${ev.role.label}</span>
       <div class="body">
-        <div class="date">${formatDate(ev.date)} · ${ev.time}</div>
-        <div class="event-title">${ev.title}</div>
-        <div class="role">${ev.roleLabel || 'Guest ' + ev.role.label}</div>
-        <div class="guest">${ev.guest.name}</div>
-        <div class="bio">${ev.guest.bio}</div>
+        <div class="date">${formatDate(ev.date)} · ${txt(ev,'time')}</div>
+        <div class="event-title">${txt(ev,'title')}</div>
+        <div class="role">${ev.roleLabelKey ? t(ev.roleLabelKey) : ev.role.label}</div>
+        <div class="guest">${txt(ev.guest,'name')}</div>
+        <div class="bio">${txt(ev.guest,'bio')}</div>
         <div class="price-row">
-          <span class="price">desde ${COP.format(TICKET_PRICES.mujer)}</span>
-          <span class="spots" data-spots="${ev.id}">${ev.spotsLeft} spots left</span>
+          <span class="price">${t('card.from')} ${COP.format(TICKET_PRICES.mujer)}</span>
+          <span class="spots" data-spots="${ev.id}">${ev.spotsLeft} ${t('card.spots')}</span>
         </div>
-        <button class="book-btn" onclick="openModal('${ev.id}')">Reservar / Book</button>
+        <button class="book-btn" onclick="openModal('${ev.id}')">${t('card.book')}</button>
       </div>
     </div>
   `).join('');
 }
-renderSchedule();
 
 /* =========================================================
    LINE-UP — the hour-by-hour programme of the next party that has one.
@@ -716,19 +982,18 @@ function renderLineup(){
   if (!ev){ section.style.display = 'none'; return; }
 
   document.getElementById('lineupSub').textContent =
-    `${formatDate(ev.date)} · Puertas 12:00 del mediodía · Música desde las 15:00`;
+    `${formatDate(ev.date)} · ${t('lineup.sub')}`;
 
   document.getElementById('lineupList').innerHTML = ev.lineup.map(s => `
     <div class="slot">
       <span class="hour">${s.hour}</span>
       <span class="act">
-        <span class="kind">${s.kind}</span>
-        ${s.act}${s.link ? ` <a href="${s.link}" target="_blank" rel="noopener">${s.linkLabel} ↗</a>` : ''}
+        <span class="kind">${txt(s,'kind')}</span>
+        ${s.act}${s.link ? ` <a href="${s.link}" target="_blank" rel="noopener">${txt(s,'linkLabel')} ↗</a>` : ''}
       </span>
     </div>
   `).join('');
 }
-renderLineup();
 
 /* =========================================================
    LUMA — live registered count per party.
@@ -748,28 +1013,32 @@ async function loadLumaCounts(){
       if (!el) return;
       const left = Math.max(0, ev.spotsLeft - data.going);
       el.textContent = data.going === 1
-        ? `1 registrado · ${left} cupos`
-        : `${data.going} registrados · ${left} cupos`;
+        ? `1 ${t('card.registered1')} · ${left} ${t('card.spotsShort')}`
+        : `${data.going} ${t('card.registered')} · ${left} ${t('card.spotsShort')}`;
     } catch (err) {
       console.warn('Luma count unavailable', err);
     }
   }));
 }
-loadLumaCounts();
 
 /* =========================================================
    BOOKING MODAL
    ========================================================= */
 let currentEvent = null;
 
+function fillEventSummary(){
+  if (!currentEvent) return;
+  document.getElementById('eventSummary').innerHTML = `
+    <strong>${txt(currentEvent,'title')}</strong><br>
+    ${formatDate(currentEvent.date)}<br>
+    ${txt(currentEvent,'time')} · ${t('venue')}<br>
+    ${txt(currentEvent.guest,'name')}
+  `;
+}
+
 function openModal(eventId){
   currentEvent = SCHEDULE.find(e => e.id === eventId);
-  document.getElementById('eventSummary').innerHTML = `
-    <strong>${currentEvent.title}</strong><br>
-    ${formatDate(currentEvent.date)}<br>
-    ${currentEvent.time} · Hotel Diez Treinta y Seis Rooftop<br>
-    ${currentEvent.role.emoji} ${currentEvent.role.label}: ${currentEvent.guest.name}
-  `;
+  fillEventSummary();
   document.getElementById('ticketType').value = 'mujer';
   document.getElementById('qty').value = 1;
   document.getElementById('guestName').value = '';
@@ -802,7 +1071,7 @@ function showError(msg){
    /api/checkout for a Stripe-hosted checkout page and hands the buyer over.
    Stripe sends them back to /?paid=1&session_id=… where the ticket is issued.
    ========================================================= */
-const PAY_BTN_LABEL = 'Pagar con Stripe / Pay & Book';
+/* label is language-dependent, so read it when we need it */
 
 async function startCheckout(){
   const name = document.getElementById('guestName').value.trim();
@@ -810,13 +1079,13 @@ async function startCheckout(){
   const type = document.getElementById('ticketType').value;
   const qty = Math.max(1, parseInt(document.getElementById('qty').value || '1', 10));
 
-  if (!name) return showError('Ingresa tu nombre / Please enter your name.');
-  if (!/^\S+@\S+\.\S+$/.test(email)) return showError('Email inválido / Please enter a valid email.');
+  if (!name) return showError(t('err.name'));
+  if (!/^\S+@\S+\.\S+$/.test(email)) return showError(t('err.email'));
 
   document.getElementById('errorMsg').style.display = 'none';
   const payBtn = document.getElementById('payBtn');
   payBtn.disabled = true;
-  payBtn.textContent = 'Conectando con Stripe…';
+  payBtn.textContent = t('modal.connecting');
 
   try {
     const res = await fetch('/api/checkout', {
@@ -826,21 +1095,21 @@ async function startCheckout(){
         name, email, qty,
         ticketType: type,
         eventId: currentEvent.id,
-        eventTitle: currentEvent.title,
+        eventTitle: currentEvent.titleKey ? I18N.es[currentEvent.titleKey] : currentEvent.title,
         eventDate: currentEvent.date.toISOString(),
-        eventTime: currentEvent.time,
+        eventTime: txt(currentEvent,'time'),
         role: currentEvent.role.label,
-        guestHost: currentEvent.guest.name
+        guestHost: txt(currentEvent.guest,'name')
       })
     });
 
     const data = await res.json().catch(() => ({}));
-    if (!res.ok || !data.url) throw new Error(data.error || 'No pudimos abrir el pago / Could not open checkout.');
+    if (!res.ok || !data.url) throw new Error(data.error || t('err.checkout'));
 
     window.location.href = data.url; // hand off to Stripe
   } catch (err) {
     payBtn.disabled = false;
-    payBtn.textContent = PAY_BTN_LABEL;
+    payBtn.textContent = t('modal.pay');
     showError(err.message);
   }
 }
@@ -922,9 +1191,9 @@ function showTicket(t){
           <strong>${t.eventTitle}</strong><br>
           ${formatDate(eventDate)}${t.eventTime ? ' · ' + t.eventTime : ''}<br>
           ${t.guestHost}<br>
-          Holder: ${t.holderName}<br>
-          ${TICKET_LABELS[t.ticketType] || 'Entrada'} × ${t.qty}<br>
-          Pagado: ${COP.format(t.total)}<br>
+          ${I18N[LANG]['ticket.holder']}: ${t.holderName}<br>
+          ${ticketLabel(t.ticketType)} × ${t.qty}<br>
+          ${I18N[LANG]['ticket.paid']}: ${COP.format(t.total)}<br>
           <span class="id">${t.id}</span>
         </div>
       </div>
@@ -954,6 +1223,7 @@ function saveTicket(t){
   localStorage.setItem(TICKETS_KEY, JSON.stringify(all));
 }
 
+applyLang();            // paints every string, then draws cards + line-up
 handleReturnFromStripe();
 </script>
 </body>
