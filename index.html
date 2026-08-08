@@ -307,6 +307,9 @@
     font-weight:600; font-size:.68rem; padding:4px 11px; border-radius:20px;
     text-transform:uppercase; letter-spacing:1px;
   }
+  .card-clip{ line-height:0; overflow:hidden; background:#000; }
+  .card-clip video{ width:100%; height:320px; object-fit:cover; display:block; }
+  @media (max-width:600px){ .card-clip video{ height:260px; } }
   .card-poster{ display:block; line-height:0; overflow:hidden; }
   .card-poster img{
     width:100%; height:320px; object-fit:cover; object-position:top center;
@@ -1035,7 +1038,8 @@ const SCHEDULE = [
     timeKey: 'time.label',
     titleKey: 'card.tbaTitle',
     role: roleByKey('mover'),
-    guest: TBA_GUEST,
+    clip: 'assets/video/tba-travolta.mp4',   // looping "who knows" gif
+    bare: true,                              // title, price and button only
     spotsLeft: 60,
     lumaEventId: ''
   }
@@ -1048,15 +1052,16 @@ function renderSchedule(){
       ${ev.poster ? `<a class="card-poster" href="${ev.poster}" onclick="openPoster('${ev.poster}'); return false;">
         <img src="${ev.poster}" alt="${txt(ev,'title')}" loading="lazy">
       </a>` : ''}
+      ${ev.clip ? `<div class="card-clip"><video src="${ev.clip}" autoplay muted loop playsinline preload="metadata" aria-hidden="true"></video></div>` : ''}
       <div class="body">
         <div class="event-title">${txt(ev,'title')}</div>
-        <div class="date">${formatDate(ev.date)} · ${txt(ev,'time')}</div>
+        ${ev.bare ? '' : `<div class="date">${formatDate(ev.date)} · ${txt(ev,'time')}</div>`}
         ${ev.roleLabelKey ? `<div class="role">${t(ev.roleLabelKey)}</div>` : ''}
-        <div class="guest">${txt(ev.guest,'name')}</div>
-        <div class="bio">${txt(ev.guest,'bio')}</div>
+        ${ev.guest ? `<div class="guest">${txt(ev.guest,'name')}</div>
+        <div class="bio">${txt(ev.guest,'bio')}</div>` : '<div class="bio"></div>'}
         <div class="price-row">
           <span class="price">${t('card.from')} ${COP.format(TICKET_PRICES.mujer)} COP</span>
-          <span class="spots" data-spots="${ev.id}">${ev.spotsLeft} ${t('card.spots')}</span>
+          ${ev.bare ? '' : `<span class="spots" data-spots="${ev.id}">${ev.spotsLeft} ${t('card.spots')}</span>`}
         </div>
         <button class="book-btn" onclick="openModal('${ev.id}')">${t('card.book')}</button>
       </div>
@@ -1120,13 +1125,14 @@ let currentEvent = null;
 
 function fillEventSummary(){
   if (!currentEvent) return;
-  document.getElementById('eventSummary').innerHTML = `
-    <strong>${txt(currentEvent,'title')}</strong><br>
-    ${formatDate(currentEvent.date)}<br>
-    ${txt(currentEvent,'time')}<br>
-    ${t('venue')}<br>
-    ${txt(currentEvent.guest,'name')}
-  `;
+  const lines = [
+    `<strong>${txt(currentEvent,'title')}</strong>`,
+    formatDate(currentEvent.date),
+    txt(currentEvent,'time'),
+    t('venue')
+  ];
+  if (currentEvent.guest) lines.push(txt(currentEvent.guest,'name'));
+  document.getElementById('eventSummary').innerHTML = lines.join('<br>');
 }
 
 function openModal(eventId){
@@ -1210,7 +1216,7 @@ async function startCheckout(){
         eventDate: currentEvent.date.toISOString(),
         eventTime: txt(currentEvent,'time'),
         role: currentEvent.role.label,
-        guestHost: txt(currentEvent.guest,'name')
+        guestHost: currentEvent.guest ? txt(currentEvent.guest,'name') : ''
       })
     });
 
