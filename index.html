@@ -212,14 +212,11 @@
       filter:drop-shadow(0 0 18px rgba(106,59,110,.35));
     }
   }
-  /* The starfield fill is near-black, so it dies on the dark sections. Those
-     two keep the mustard heading; galaxy is reserved for light backgrounds. */
+  /* Same starfield, lifted onto a deep-indigo sky instead of near-black — the
+     near-black version vanished against the wine and ink backgrounds. */
   .pricing .section-title.galaxy-text, .promoted .section-title.galaxy-text{
-    -webkit-text-fill-color:var(--mustard);
-    color:var(--mustard);
-    background:none;
-    filter:none;
-    animation:none;
+    background-color:#2b2170;
+    filter:drop-shadow(0 0 14px rgba(0,0,0,.55));
   }
   @keyframes driftGalaxy{
     from{ background-position:0% 50%; }
@@ -265,6 +262,11 @@
 
   /* ---------- ABOUT ---------- */
   .about{ background:var(--parchment); }
+  /* sun title stays golden, with a warm outline so it holds on parchment */
+  .about .section-title{
+    color:var(--mustard);
+    text-shadow:2px 2px 0 var(--terracotta), 0 0 22px rgba(242,183,5,.35);
+  }
   .about-grid{
     max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
   }
