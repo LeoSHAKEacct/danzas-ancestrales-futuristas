@@ -327,11 +327,39 @@
   }
   .tier-promo strong{ color:var(--mustard); }
 
-  /* ---------- FOOTER ---------- */
-  footer{ background:var(--ink); color:var(--parchment); padding:50px 6% 26px; text-align:center; }
-  footer .brand{ font-family:'Unbounded',cursive; color:var(--mustard); font-size:1.2rem; margin-bottom:10px;}
-  footer p{ opacity:.75; font-size:.85rem; max-width:600px; margin:6px auto; }
-  footer .fine{ margin-top:26px; font-size:.72rem; opacity:.5; }
+  /* ---------- FOOTER ----------
+     Same psychedelic wash as the hero: wine base, blurred colour blobs, then a
+     cream veil on top. Text goes dark because the surface ends up light. */
+  footer{
+    position:relative; overflow:hidden;
+    background:var(--wine); color:var(--ink);
+    padding:50px 6% 26px; text-align:center;
+  }
+  footer::before{
+    content:"";
+    position:absolute; inset:-15%; z-index:0;
+    background:
+      radial-gradient(circle at 22% 28%, var(--hotpink) 0%, transparent 40%),
+      radial-gradient(circle at 78% 15%, var(--mustard) 0%, transparent 38%),
+      radial-gradient(circle at 85% 72%, var(--teal) 0%, transparent 42%),
+      radial-gradient(circle at 15% 80%, var(--terracotta) 0%, transparent 42%),
+      radial-gradient(circle at 50% 50%, var(--purple) 0%, transparent 55%),
+      radial-gradient(circle at 50% 95%, var(--olive) 0%, transparent 35%);
+    filter:blur(70px) saturate(1.5) contrast(1.1);
+    animation:psychSwirl 24s ease-in-out infinite alternate;
+  }
+  footer::after{
+    content:"";
+    position:absolute; inset:0; z-index:1;
+    /* Slightly stronger veil than the hero's: the footer's fine print is small,
+       so the colour underneath needs a floor to stay readable. */
+    background:radial-gradient(circle at 50% 25%, rgba(251,239,219,.22) 0%, var(--cream) 70%);
+  }
+  footer > *{ position:relative; z-index:2; }
+  footer .brand{ font-family:'Unbounded',cursive; color:var(--wine); font-size:1.2rem; margin-bottom:10px;}
+  footer p{ opacity:.85; font-size:.85rem; max-width:600px; margin:6px auto; }
+  footer a{ color:var(--wine)!important; }
+  footer .fine{ margin-top:26px; font-size:.72rem; opacity:.6; }
 
   /* ---------- MODAL ---------- */
   .modal-overlay{
