@@ -19,7 +19,7 @@ function getStripe(){
 /* Colombian pesos. COP is NOT a zero-decimal currency in Stripe, so amounts
    are in centavos: 25.000 COP => 2_500_000. */
 const CURRENCY = 'cop';
-const PRICES = { hombre: 2500000, mujer: 1200000 };
+const PRICES = { hombre: 3300000, mujer: 1300000 };
 const LABELS = { hombre: 'Entrada Hombre', mujer: 'Entrada Mujer' };
 const MAX_QTY = 8;
 
