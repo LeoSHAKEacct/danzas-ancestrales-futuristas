@@ -335,6 +335,36 @@
   }
   .tier-promo strong{ color:var(--mustard); }
 
+
+  /* ---------- PROMOTED BY ----------
+     Dark on purpose: the EMZAK mark is white artwork, invisible on cream. */
+  .promoted{ background:var(--ink); text-align:center; padding:56px 6%; }
+  .promoted .section-title{ color:var(--mustard); font-size:1.5rem; margin-bottom:6px; }
+  .promo-logos{
+    display:flex; flex-wrap:wrap; justify-content:center; align-items:stretch;
+    gap:22px; max-width:760px; margin:26px auto 0;
+  }
+  .promo-card{
+    flex:1 1 240px; max-width:320px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(251,239,219,.18);
+    border-radius:18px; padding:26px 22px; text-decoration:none;
+    transition:.2s;
+  }
+  .promo-card:hover{ background:rgba(255,255,255,.1); border-color:var(--mustard); transform:translateY(-3px); }
+  .promo-card img{ height:74px; width:auto; max-width:100%; object-fit:contain; display:block; }
+  .promo-card span{
+    color:var(--cream); font-family:'Poppins',sans-serif; font-weight:600;
+    font-size:.85rem; letter-spacing:1.5px; text-transform:uppercase;
+  }
+  .promo-card:hover span{ color:var(--mustard); }
+  @media (max-width:600px){
+    .promoted{ padding:44px 20px; }
+    .promo-logos{ gap:16px; }
+    .promo-card{ flex:1 1 100%; padding:22px 18px; }
+    .promo-card img{ height:62px; }
+  }
+
   /* ---------- FOOTER ----------
      Same psychedelic wash as the hero: wine base, blurred colour blobs, then a
      cream veil on top. Text goes dark because the surface ends up light. */
@@ -640,6 +670,20 @@
   <p class="tier-promo" data-i18n-html="price.promo">🌸 Una chica que venga con 2 amigas <strong>entra gratis</strong> — se aplica en la puerta. Precios en pesos colombianos.</p>
 </section>
 
+<section class="promoted" id="promoted">
+  <h2 class="section-title" data-i18n="promo.title">Promovido por</h2>
+  <div class="promo-logos">
+    <a class="promo-card" href="https://app.shakeapp.today/" target="_blank" rel="noopener">
+      <img src="assets/img/shake-logo.png" alt="SHAKE-SOCIAL" loading="lazy">
+      <span>SHAKE-SOCIAL</span>
+    </a>
+    <a class="promo-card" href="https://experienciasemzak.com/en" target="_blank" rel="noopener">
+      <img src="assets/img/emzak-logo.png" alt="EMZAK Experiencias" loading="lazy">
+      <span>EMZAK Experiencias</span>
+    </a>
+  </div>
+</section>
+
 <footer>
   <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo"><a href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" style="color:var(--mustard);">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</a></p>
@@ -730,6 +774,7 @@ const I18N = {
     'price.b1':'Acceso a la azotea y la piscina, sesión completa',
     'price.b2':'Bebida de bienvenida', 'price.b3':'Círculo de apertura',
     'price.b4':'Vibe-coding y co-working de día',
+    'promo.title':'Promovido por',
     'footer.tagline':'Una experiencia botánica en la zona más icónica de Provenza, Poblado.',
     'footer.next':'Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00',
     'footer.stripe':'Pagos procesados de forma segura por Stripe. Tu entrada con código QR se genera al confirmarse el pago.',
@@ -779,6 +824,7 @@ const I18N = {
     'price.b1':'Rooftop & pool access, full session',
     'price.b2':'Welcome drink', 'price.b3':'Opening circle',
     'price.b4':'Vibe-coding & co-working by day',
+    'promo.title':'Promoted by',
     'footer.tagline':'A botanical experience in the most iconic corner of Provenza, Poblado.',
     'footer.next':'Every 15 days · Next: Sunday 16 August, 12:00 midday until 02:00',
     'footer.stripe':'Payments securely processed by Stripe. Your QR ticket is issued once payment is confirmed.',
