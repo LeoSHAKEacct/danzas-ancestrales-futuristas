@@ -241,27 +241,15 @@
   .about-grid{
     max-width:1000px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:50px; align-items:center;
   }
-  /* The whole video frame stays visible; a circular spotlight lifts the middle
-     and everything outside it fades into the section background. */
+  /* Full video frame, nothing cropped and nothing dimmed. */
   .about-grid .art{
-    aspect-ratio:3/4; position:relative; overflow:visible;
+    aspect-ratio:3/4; position:relative;
     display:flex; align-items:center; justify-content:center;
   }
   .about-grid .art img,
   .about-grid .art video{
-    width:100%; height:100%; object-fit:contain; display:block; border-radius:12px;
-  }
-  /* radius 30% of width == 22.5% of height at 3/4, so the hole is a true circle */
-  .about-grid .art .spotlight{
-    position:absolute; inset:0; pointer-events:none;
-    background:radial-gradient(ellipse 30% 22.5% at 50% 50%,
-      rgba(245,227,196,0) 98%, rgba(245,227,196,.82) 100%);
-  }
-  .about-grid .art .ring{
-    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-    width:60%; aspect-ratio:1; border-radius:50%;
-    border:8px solid var(--wine); pointer-events:none;
-    box-shadow:0 14px 34px rgba(122,31,43,.28);
+    width:100%; height:100%; object-fit:contain; display:block;
+    border-radius:16px;
   }
   .about-grid .art .credit{
     position:absolute; bottom:10px; right:14px; font-size:.62rem; color:#fff; opacity:.75;
@@ -403,6 +391,9 @@
   }
   .modal-close:hover{ color:#111; }
   .modal h2{ color:#111; margin:0 0 18px; font-size:1.45rem; letter-spacing:-.3px; }
+  @supports ((-webkit-background-clip:text) or (background-clip:text)){
+    .modal h2.galaxy-text{ color:transparent; font-size:1.6rem; }
+  }
   .modal .event-summary{
     background:#fff; border-radius:18px; padding:16px 18px; margin-bottom:18px;
     font-size:.88rem; line-height:1.55; color:#111;
@@ -599,8 +590,6 @@
       <video src="assets/video/danza.mp4" poster="assets/video/danza-poster.jpg"
              autoplay muted loop playsinline preload="metadata"
              aria-label="Baile en la azotea"></video>
-      <span class="spotlight" aria-hidden="true"></span>
-      <span class="ring" aria-hidden="true"></span>
     </div>
     <div>
       <p class="es" data-i18n="about.p1">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
@@ -664,7 +653,7 @@
 <div class="modal-overlay" id="bookingModal">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">×</button>
-    <h2 data-i18n="modal.title">Reserva tu lugar</h2>
+    <h2 class="galaxy-text" data-i18n="modal.title">Reserva tu lugar</h2>
     <div class="event-summary" id="eventSummary"></div>
 
     <label data-i18n="modal.typeLabel">Tipo de entrada</label>
@@ -1031,7 +1020,8 @@ function fillEventSummary(){
   document.getElementById('eventSummary').innerHTML = `
     <strong>${txt(currentEvent,'title')}</strong><br>
     ${formatDate(currentEvent.date)}<br>
-    ${txt(currentEvent,'time')} · ${t('venue')}<br>
+    ${txt(currentEvent,'time')}<br>
+    ${t('venue')}<br>
     ${txt(currentEvent.guest,'name')}
   `;
 }
