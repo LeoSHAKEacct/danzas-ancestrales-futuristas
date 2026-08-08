@@ -279,8 +279,8 @@
     text-transform:uppercase; letter-spacing:1px;
   }
   .card .body{ padding:14px 22px 22px; flex:1; display:flex; flex-direction:column; }
-  .card .date{ font-family:'Poppins',sans-serif; font-weight:600; color:#000; font-size:.82rem; opacity:.75; }
-  .card .event-title{ font-family:'Unbounded', cursive; font-weight:700; color:#000; font-size:1.2rem; margin:8px 0 10px; line-height:1.3; }
+  .card .date{ font-family:'Poppins',sans-serif; font-weight:600; color:#000; font-size:.82rem; opacity:.7; margin-bottom:10px; }
+  .card .event-title{ font-family:'Unbounded', cursive; font-weight:700; color:#000; font-size:1.2rem; margin:0 0 8px; line-height:1.3; }
   .card .role{ font-weight:600; color:#000; opacity:.6; margin:4px 0 2px; font-size:.72rem; text-transform:uppercase; letter-spacing:1px;}
   .card .guest{ font-family:'Poppins',sans-serif; font-weight:600; font-size:1rem; color:#000; margin-bottom:8px; }
   .card .bio{ font-size:.86rem; color:#000; opacity:.7; flex:1; margin-bottom:18px; line-height:1.55;}
@@ -992,8 +992,8 @@ function renderSchedule(){
   container.innerHTML = SCHEDULE.map(ev => `
     <div class="card">
       <div class="body">
-        <div class="date">${formatDate(ev.date)} · ${txt(ev,'time')}</div>
         <div class="event-title">${txt(ev,'title')}</div>
+        <div class="date">${formatDate(ev.date)} · ${txt(ev,'time')}</div>
         ${ev.roleLabelKey ? `<div class="role">${t(ev.roleLabelKey)}</div>` : ''}
         <div class="guest">${txt(ev.guest,'name')}</div>
         <div class="bio">${txt(ev.guest,'bio')}</div>
