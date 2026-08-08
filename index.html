@@ -136,11 +136,14 @@
   }
   a.eyebrow:hover{ background:var(--terracotta); color:var(--cream); transform:translateY(-2px); }
   .hero .eyebrow .loc-logo{ border-color:var(--cream); margin-right:12px; }
+  .eyebrow .pin{ width:15px; height:15px; fill:currentColor; margin-right:7px; flex-shrink:0; }
+  /* the pill now sits under the character, centred on it */
+  .hero-right{ display:flex; flex-direction:column; align-items:center; gap:16px; }
+  .hero-right .eyebrow{ margin-bottom:0; }
   .hero h1{
     font-size:clamp(1.9rem, 6vw, 3.6rem);
     font-weight:800;
     color:var(--wine);
-    text-shadow:2px 2px 0 var(--mustard);
     margin:0;
     line-height:1.2;
     text-align:center;
@@ -184,7 +187,7 @@
       -webkit-background-clip:text;
       background-clip:text;
       /* drop-shadow follows the glyph alpha; text-shadow would paint a solid slab */
-      filter:drop-shadow(2px 2px 0 var(--mustard)) drop-shadow(0 0 18px rgba(106,59,110,.45));
+      filter:drop-shadow(0 0 18px rgba(106,59,110,.35));
       animation:driftGalaxy 60s linear infinite;
     }
   }
@@ -252,42 +255,36 @@
   .cards{
     max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:28px;
   }
+  /* Deliberately plain: translucent grey, black type, no colour blocks. */
   .card{
-    background:var(--parchment); border-radius:18px; overflow:hidden;
-    border:3px solid var(--wine); position:relative;
-    box-shadow:8px 8px 0 rgba(122,31,43,.18);
+    background:rgba(43,27,18,.05); border-radius:14px; overflow:hidden;
+    border:1px solid rgba(43,27,18,.18); position:relative;
     transition:.2s;
     display:flex; flex-direction:column;
+    color:#000;
   }
-  .card:hover{ transform:translateY(-6px); box-shadow:10px 12px 0 rgba(122,31,43,.22); }
+  .card:hover{ background:rgba(43,27,18,.08); border-color:rgba(43,27,18,.32); }
   .card .tag{
-    position:absolute; top:14px; left:14px; background:var(--mustard); color:var(--wine);
-    font-weight:700; font-size:.72rem; padding:5px 12px; border-radius:20px; text-transform:uppercase; letter-spacing:1px;
-    z-index:2;
+    align-self:flex-start; margin:18px 22px 0;
+    background:rgba(43,27,18,.08); color:#000; border:1px solid rgba(43,27,18,.2);
+    font-weight:600; font-size:.68rem; padding:4px 11px; border-radius:20px;
+    text-transform:uppercase; letter-spacing:1px;
   }
-  .card .banner{
-    height:120px; display:flex; align-items:center; justify-content:center; font-size:2.4rem;
-  }
-  .card .banner.dancer{ background:linear-gradient(135deg,var(--terracotta),var(--hotpink)); }
-  .card .banner.mover{ background:linear-gradient(135deg,var(--purple),var(--teal)); }
-  .card .banner.yoga{ background:linear-gradient(135deg,var(--olive),var(--mustard)); }
-  .card .banner.musician{ background:linear-gradient(135deg,var(--mustard),var(--terracotta)); }
-  .card .banner.games{ background:linear-gradient(135deg,var(--teal),var(--olive)); }
-  .card .body{ padding:20px 22px 24px; flex:1; display:flex; flex-direction:column; }
-  .card .date{ font-family:'Unbounded', cursive; font-weight:600; color:var(--wine); font-size:.85rem; }
-  .card .event-title{ font-family:'Unbounded', cursive; font-weight:700; color:var(--terracotta); font-size:1.25rem; margin:6px 0 8px; line-height:1.3; }
-  .card .role{ font-weight:700; color:var(--terracotta); margin:4px 0 2px; font-size:.95rem; text-transform:uppercase; letter-spacing:.5px;}
-  .card .guest{ font-family:'Yeseva One',serif; font-size:1.15rem; margin-bottom:8px; }
-  .card .bio{ font-size:.87rem; opacity:.8; flex:1; margin-bottom:16px; line-height:1.5;}
-  .card .price-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
-  .card .price{ font-weight:700; color:var(--wine); font-size:1.1rem; }
-  .card .spots{ font-size:.78rem; color:var(--olive); font-weight:600; }
+  .card .body{ padding:14px 22px 22px; flex:1; display:flex; flex-direction:column; }
+  .card .date{ font-family:'Poppins',sans-serif; font-weight:600; color:#000; font-size:.82rem; opacity:.75; }
+  .card .event-title{ font-family:'Unbounded', cursive; font-weight:700; color:#000; font-size:1.2rem; margin:8px 0 10px; line-height:1.3; }
+  .card .role{ font-weight:600; color:#000; opacity:.6; margin:4px 0 2px; font-size:.72rem; text-transform:uppercase; letter-spacing:1px;}
+  .card .guest{ font-family:'Poppins',sans-serif; font-weight:600; font-size:1rem; color:#000; margin-bottom:8px; }
+  .card .bio{ font-size:.86rem; color:#000; opacity:.7; flex:1; margin-bottom:18px; line-height:1.55;}
+  .card .price-row{ display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; }
+  .card .price{ font-weight:700; color:#000; font-size:1.05rem; }
+  .card .spots{ font-size:.78rem; color:#000; opacity:.55; font-weight:500; }
   .book-btn{
-    width:100%; background:var(--wine); color:var(--cream); border:none; padding:12px; border-radius:10px;
-    font-weight:700; cursor:pointer; font-family:'Poppins',sans-serif; font-size:.95rem;
+    width:100%; background:transparent; color:#000; border:1.5px solid #000; padding:12px; border-radius:8px;
+    font-weight:600; cursor:pointer; font-family:'Poppins',sans-serif; font-size:.92rem; transition:.18s;
   }
-  .book-btn:hover{ background:var(--terracotta); }
-  .book-btn:disabled{ background:#999; cursor:not-allowed; }
+  .book-btn:hover{ background:#000; color:var(--cream); }
+  .book-btn:disabled{ border-color:#999; color:#999; background:transparent; cursor:not-allowed; }
 
   /* ---------- LINE-UP ---------- */
   .lineup{ background:var(--parchment); }
@@ -374,11 +371,12 @@
 
   /* ---------- TICKET ---------- */
   .ticket{
-    border:3px dashed var(--wine); border-radius:16px; padding:22px; background:#fff;
+    border:1px dashed rgba(0,0,0,.35); border-radius:14px; padding:22px;
+    background:rgba(43,27,18,.05); color:#000;
     display:grid; grid-template-columns:1fr auto; gap:16px; align-items:center;
   }
-  .ticket h3{ margin:0 0 4px; color:var(--wine); font-size:1.3rem; }
-  .ticket .meta{ font-size:.82rem; line-height:1.6; }
+  .ticket h3{ margin:0 0 6px; color:#000; font-size:1.05rem; letter-spacing:0; }
+  .ticket .meta{ font-size:.82rem; line-height:1.6; color:#000; }
   .ticket .qr{ width:110px; height:110px; }
   .ticket .id{ font-family:monospace; font-size:.78rem; opacity:.7; }
 
@@ -426,9 +424,9 @@
         <div class="hero-character" aria-hidden="true">
           <img src="assets/img/cyber-indio.png" alt="Illustrated ancestral chief in a feather headdress, stylized with a cyber-futuristic visor">
         </div>
+        <a class="eyebrow" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" aria-label="Ver la ubicación en Google Maps"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo"><svg class="pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>Location</a>
       </div>
       <div class="hero-left">
-        <a class="eyebrow" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín</a>
         <div class="subtitle-es">A social-gathering to celebrate life</div>
         <div class="subtitle">Rooftop Sessions</div>
         <p class="desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
@@ -550,7 +548,7 @@
 </div>
 
 <a class="whatsapp-float" href="https://wa.me/573223140283" target="_blank" rel="noopener">
-  <span class="label">To book/more info</span>
+  <span class="label">more info...</span>
   <span class="bubble">
     <svg viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
       <path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.31.652 4.47 1.78 6.31L4 29l7.86-1.75A11.94 11.94 0 0 0 16.001 27C22.63 27 28 21.627 28 15S22.63 3 16.001 3Zm0 21.7c-1.99 0-3.85-.56-5.43-1.53l-.39-.23-4.66 1.04 1.06-4.53-.25-.4A9.66 9.66 0 0 1 6.3 15c0-5.35 4.35-9.7 9.7-9.7 5.35 0 9.7 4.35 9.7 9.7 0 5.35-4.35 9.7-9.7 9.7Zm5.32-7.26c-.29-.15-1.72-.85-1.99-.95-.27-.1-.46-.15-.66.15-.2.29-.75.95-.92 1.15-.17.2-.34.22-.63.07-.29-.15-1.22-.45-2.32-1.43-.86-.77-1.44-1.71-1.61-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.2 2.06 3.15 5 4.41.7.3 1.24.48 1.67.62.7.22 1.34.19 1.84.11.56-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.13-.27-.2-.56-.35Z"/>
@@ -624,7 +622,7 @@ const SCHEDULE = [
     id:'party-1',
     date: new Date('2026-08-16T12:00:00'),
     time: '12:00 mediodía – 02:00 madrugada',
-    title: 'Ecstatic Dance + Vibe Code and Chill',
+    title: 'Networking. Pool-party & chill',
     role: roleByKey('mover'),
     roleLabel: 'Line-up del día',
     guest: {
@@ -662,8 +660,7 @@ function renderSchedule(){
   const container = document.getElementById('cardsContainer');
   container.innerHTML = SCHEDULE.map(ev => `
     <div class="card">
-      <span class="tag">${ev.role.emoji} ${ev.role.label}</span>
-      <div class="banner ${ev.role.bannerClass}">${ev.role.emoji}</div>
+      <span class="tag">${ev.role.label}</span>
       <div class="body">
         <div class="date">${formatDate(ev.date)} · ${ev.time}</div>
         <div class="event-title">${ev.title}</div>
