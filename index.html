@@ -128,18 +128,8 @@
     pointer-events:none; opacity:.94;
   }
   .hero-character img{ width:100%; height:auto; display:block; border-radius:18px; }
-  .hero .eyebrow{
-    display:inline-flex; align-items:center; background:var(--wine); color:var(--mustard);
-    padding:6px 20px 6px 6px; border-radius:999px; font-weight:700; font-size:.8rem;
-    letter-spacing:2px; margin-bottom:18px; text-transform:uppercase;
-    text-decoration:none; transition:.18s;
-  }
-  a.eyebrow:hover{ background:var(--terracotta); color:var(--cream); transform:translateY(-2px); }
-  .hero .eyebrow .loc-logo{ border-color:var(--cream); margin-right:12px; }
-  .eyebrow .pin{ width:15px; height:15px; fill:currentColor; margin-right:7px; flex-shrink:0; }
   /* the pill now sits under the character, centred on it */
   .hero-right{ display:flex; flex-direction:column; align-items:center; gap:16px; }
-  .hero-right .eyebrow{ margin-bottom:0; max-width:min(430px, 92vw); text-align:left; line-height:1.4; }
   .hero h1{
     font-size:clamp(1.9rem, 6vw, 3.6rem);
     font-weight:800;
@@ -242,7 +232,8 @@
     aspect-ratio:1/1; border-radius:50%; overflow:hidden;
     border:8px solid var(--wine); position:relative; box-shadow:8px 8px 0 rgba(122,31,43,.18);
   }
-  .about-grid .art img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .about-grid .art img,
+  .about-grid .art video{ width:100%; height:100%; object-fit:cover; display:block; }
   .about-grid .art .credit{
     position:absolute; bottom:10px; right:14px; font-size:.62rem; color:#fff; opacity:.75;
     text-shadow:0 1px 3px rgba(0,0,0,.6); font-family:'Poppins',sans-serif;
@@ -418,11 +409,17 @@
     position:fixed; right:22px; bottom:22px; z-index:80;
     display:flex; align-items:center; gap:10px;
   }
-  .whatsapp-float .label{
-    background:var(--wine); color:var(--cream); padding:8px 14px; border-radius:20px;
-    font-size:.82rem; font-weight:600; box-shadow:0 4px 14px rgba(0,0,0,.25);
-    white-space:nowrap;
+  /* Floating location chip: hotel logo + pin, links straight to Google Maps. */
+  .whatsapp-float .loc-pill{
+    display:flex; align-items:center; gap:2px;
+    background:var(--wine); color:var(--mustard);
+    padding:6px 14px 6px 6px; border-radius:999px;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);
+    text-decoration:none; transition:.18s;
   }
+  .whatsapp-float .loc-pill:hover{ background:var(--terracotta); color:var(--cream); transform:translateY(-2px); }
+  .whatsapp-float .loc-logo{ height:38px; width:38px; border-width:2px; margin-right:6px; }
+  .whatsapp-float .pin{ width:20px; height:20px; fill:currentColor; }
   .whatsapp-float .bubble{
     width:56px; height:56px; border-radius:50%; background:#25D366; display:flex; align-items:center; justify-content:center;
     box-shadow:0 4px 14px rgba(0,0,0,.3); text-decoration:none; flex-shrink:0;
@@ -452,7 +449,6 @@
         <div class="hero-character" aria-hidden="true">
           <img src="assets/img/cyber-indio.png" alt="Illustrated ancestral chief in a feather headdress, stylized with a cyber-futuristic visor">
         </div>
-        <a class="eyebrow" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" aria-label="Ver la ubicación en Google Maps"><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo"><svg class="pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín</a>
       </div>
       <div class="hero-left">
         <div class="subtitle-es">A social-gathering to celebrate life</div>
@@ -473,8 +469,9 @@
   <div class="section-sub">"Todos somos raíz, todos somos sol"</div>
   <div class="about-grid">
     <div class="art">
-      <img src="https://images.unsplash.com/photo-1706611498219-3c73fdcd83e2?w=1000&amp;h=1000&amp;fit=crop&amp;crop=entropy&amp;auto=format&amp;q=75" alt="Bird's-eye view of a rooftop swimming pool with people lounging around it" loading="lazy">
-      <span class="credit">Photo: Unsplash</span>
+      <video src="assets/video/danza.mp4" poster="assets/video/danza-poster.jpg"
+             autoplay muted loop playsinline preload="metadata"
+             aria-label="Baile en la azotea"></video>
     </div>
     <div>
       <p class="es">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
@@ -575,14 +572,17 @@
   </div>
 </div>
 
-<a class="whatsapp-float" href="https://wa.me/573223140283" target="_blank" rel="noopener">
-  <span class="label">more info...</span>
-  <span class="bubble">
+<div class="whatsapp-float">
+  <a class="loc-pill" href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" aria-label="Ver la ubicación del hotel en Google Maps" title="Hotel Diez Treinta y Seis · Provenza, Poblado, Medellín">
+    <img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo">
+    <svg class="pin" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5Z"/></svg>
+  </a>
+  <a class="bubble" href="https://wa.me/573223140283" target="_blank" rel="noopener">
     <svg viewBox="0 0 32 32" fill="white" xmlns="http://www.w3.org/2000/svg">
       <path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.31.652 4.47 1.78 6.31L4 29l7.86-1.75A11.94 11.94 0 0 0 16.001 27C22.63 27 28 21.627 28 15S22.63 3 16.001 3Zm0 21.7c-1.99 0-3.85-.56-5.43-1.53l-.39-.23-4.66 1.04 1.06-4.53-.25-.4A9.66 9.66 0 0 1 6.3 15c0-5.35 4.35-9.7 9.7-9.7 5.35 0 9.7 4.35 9.7 9.7 0 5.35-4.35 9.7-9.7 9.7Zm5.32-7.26c-.29-.15-1.72-.85-1.99-.95-.27-.1-.46-.15-.66.15-.2.29-.75.95-.92 1.15-.17.2-.34.22-.63.07-.29-.15-1.22-.45-2.32-1.43-.86-.77-1.44-1.71-1.61-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.49-.66-.5h-.56c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.44s1.05 2.83 1.19 3.03c.15.2 2.06 3.15 5 4.41.7.3 1.24.48 1.67.62.7.22 1.34.19 1.84.11.56-.08 1.72-.7 1.96-1.38.24-.68.24-1.26.17-1.38-.07-.13-.27-.2-.56-.35Z"/>
     </svg>
-  </span>
-</a>
+  </a>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 /* =========================================================
