@@ -248,8 +248,8 @@
   }
   .about-grid .art img,
   .about-grid .art video{
-    width:100%; height:100%; object-fit:contain; display:block;
-    border-radius:16px;
+    height:100%; width:auto; max-width:100%; object-fit:contain; display:block;
+    border-radius:22px; overflow:hidden;
   }
   .about-grid .art .credit{
     position:absolute; bottom:10px; right:14px; font-size:.62rem; color:#fff; opacity:.75;
@@ -327,6 +327,7 @@
   }
   .tier h3{ color:var(--mustard); margin:0 0 6px; }
   .tier .p{ font-size:2.2rem; font-weight:700; margin:10px 0; }
+  .tier .p small{ font-size:.9rem; font-weight:600; opacity:.75; letter-spacing:1px; }
   .tier ul{ text-align:left; padding-left:18px; font-size:.88rem; opacity:.9; line-height:1.7;}
   .tier-promo{
     max-width:640px; margin:30px auto 0; font-size:.9rem; line-height:1.6;
@@ -573,7 +574,6 @@
 <body>
 
 <nav>
-  <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <ul>
     <li><a href="#about" data-i18n="nav.about">La Movida</a></li>
     <li><a href="#schedule" data-i18n="nav.parties">Fiestas</a></li>
@@ -623,8 +623,8 @@
     </div>
     <div>
       <p class="es" data-i18n="about.p1">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
-      <p>DANZAS ANCESTRALES Y FUTURISTAS is our rooftop's answer to Woodstock: barefoot, sun-drunk, community-first gatherings held on the Hotel Diez Treinta y Seis terrace every 15 days. No headliners, no hierarchy — just a rotating circle of guests who hold space differently each time: a dancer one week, a movement activator the next, a yoga facilitator or live musician after that. Some sessions lean into wellness practices, others into games and play — it varies every 15 days, and everyone is welcome: digital nomads, Medellín residents, and the simply curious.</p>
-      <p>Tickets include rooftop and pool access, one welcome drink, and a guided opening circle. Daylight hours run on vibe-coding sessions and co-working before the music takes over. Come as you are — flowers, fringe, and good energy encouraged.</p>
+      <p data-i18n="about.p2">DANZAS ANCESTRALES Y FUTURISTAS is our rooftop's answer to Woodstock: barefoot, sun-drunk, community-first gatherings held on the Hotel Diez Treinta y Seis terrace every 15 days. No headliners, no hierarchy — just a rotating circle of guests who hold space differently each time: a dancer one week, a movement activator the next, a yoga facilitator or live musician after that. Some sessions lean into wellness practices, others into games and play — it varies every 15 days, and everyone is welcome: digital nomads, Medellín residents, and the simply curious.</p>
+      <p data-i18n="about.p3">Tickets include rooftop and pool access, one welcome drink, and a guided opening circle. Daylight hours run on vibe-coding sessions and co-working before the music takes over. Come as you are — flowers, fringe, and good energy encouraged.</p>
     </div>
   </div>
 </section>
@@ -648,7 +648,7 @@
   <div class="tiers">
     <div class="tier">
       <h3 data-i18n="price.women">Mujer</h3>
-      <div class="p">$12.000</div>
+      <div class="p">$12.000 <small>COP</small></div>
       <ul>
         <li>Acceso a la azotea y la piscina, sesión completa</li>
         <li>Bebida de bienvenida</li>
@@ -658,7 +658,7 @@
     </div>
     <div class="tier">
       <h3 data-i18n="price.men">Hombre</h3>
-      <div class="p">$25.000</div>
+      <div class="p">$25.000 <small>COP</small></div>
       <ul>
         <li>Acceso a la azotea y la piscina, sesión completa</li>
         <li>Bebida de bienvenida</li>
@@ -685,7 +685,6 @@
 </section>
 
 <footer>
-  <div class="brand groovy">DANZAS ANCESTRALES Y FUTURISTAS</div>
   <p><img class="loc-logo" src="assets/img/logo-10-13.jpg" alt="10/13 logo"><a href="https://www.google.com/maps/search/?api=1&amp;query=Hotel%20Diez%20Treinta%20y%20Seis%2C%20Provenza%2C%20El%20Poblado%2C%20Medell%C3%ADn" target="_blank" rel="noopener" style="color:var(--mustard);">Hotel Diez Treinta y Seis Rooftop · Provenza, El Poblado, Medellín, Colombia</a></p>
   <p data-i18n="footer.tagline">Una experiencia botánica en la zona más icónica de Provenza, Poblado.</p>
   <p data-i18n="footer.next">Cada 15 días · Próxima: domingo 16 de agosto, 12:00 del mediodía hasta las 02:00</p>
@@ -716,7 +715,7 @@
     <label data-i18n="modal.emailLabel">Email</label>
     <input type="email" id="guestEmail" placeholder="lola@email.com">
 
-    <div class="total"><span data-i18n="modal.total">Total</span><span id="totalPrice">$ 12.000</span></div>
+    <div class="total"><span data-i18n="modal.total">Total</span><span id="totalPrice">$ 12.000 COP</span></div>
     <div class="error-msg" id="errorMsg"></div>
     <button class="pay-btn" id="payBtn" onclick="startCheckout()" data-i18n="modal.pay">Pagar con Stripe</button>
     <div class="demo-note" data-i18n="modal.secure">🔒 Pago seguro con Stripe — te llevamos a la página de pago de Stripe y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.</div>
@@ -794,7 +793,8 @@ const I18N = {
     'card.guestBio':'Sanación sonora, juego de conexión humana y música hasta las 2 am. Line-up completo más abajo.',
     'card.tbaName':'Por anunciar', 'card.tbaBio':'Artista invitado se anuncia pronto — seguinos por WhatsApp.',
     'card.tbaTitle':'Por anunciar',
-    'kind.sound':'Sanación sonora', 'kind.game':'Juego de conexión', 'kind.dj':'DJ set',
+    'kind.session':'Actividad', 'kind.dj':'DJ set',
+    'act.sound':'Sanación sonora', 'act.game':'Juego de conexión humana',
     'link.listen':'Escuchar en SoundCloud', 'link.ig':'Instagram',
     'err.name':'Ingresa tu nombre.', 'err.email':'Email inválido.',
     'err.checkout':'No pudimos abrir el pago.',
@@ -844,7 +844,8 @@ const I18N = {
     'card.guestBio':'Sound healing, a human-connection game and music until 2 am. Full line-up below.',
     'card.tbaName':'To be announced', 'card.tbaBio':'Guest artist announced soon — follow us on WhatsApp.',
     'card.tbaTitle':'To be announced',
-    'kind.sound':'Sound healing', 'kind.game':'Connection game', 'kind.dj':'DJ set',
+    'kind.session':'Session', 'kind.dj':'DJ set',
+    'act.sound':'Sound Healing', 'act.game':'Human-Connection Game',
     'link.listen':'Listen on SoundCloud', 'link.ig':'Instagram',
     'err.name':'Please enter your name.', 'err.email':'Please enter a valid email.',
     'err.checkout':'Could not open checkout.',
@@ -960,8 +961,8 @@ const SCHEDULE = [
     roleLabelKey: 'card.lineupOfDay',
     guest: { nameKey:'card.guestSummary', bioKey:'card.guestBio' },
     lineup: [
-      { hour:'15:00 – 16:00', kindKey:'kind.sound', act:'Sound Healing' },
-      { hour:'17:00 – 18:00', kindKey:'kind.game', act:'Human-Connection Game' },
+      { hour:'15:00 – 16:00', kindKey:'kind.session', actKey:'act.sound' },
+      { hour:'17:00 – 18:00', kindKey:'kind.session', actKey:'act.game' },
       { hour:'18:00 – 19:00', kindKey:'kind.dj', act:'DJ Camilo' },
       { hour:'19:00 – 21:00', kindKey:'kind.dj', act:'DJ Leo' },
       { hour:'21:00 – 22:30', kindKey:'kind.dj', act:'DJ Tachi Ale',
@@ -971,7 +972,7 @@ const SCHEDULE = [
       { hour:'00:00 – 02:00', kindKey:'kind.dj', act:'DJ Soe Music',
         link:'https://www.instagram.com/soe__music?igsh=NHF3ejVoZDcxbm1v', linkLabelKey:'link.ig' }
     ],
-    spotsLeft: 40,
+    spotsLeft: 60,
     lumaEventId: ''   // paste the Luma event id (evt-…) to show its live count
   },
   {
@@ -981,7 +982,7 @@ const SCHEDULE = [
     titleKey: 'card.tbaTitle',
     role: roleByKey('mover'),
     guest: TBA_GUEST,
-    spotsLeft: 40,
+    spotsLeft: 60,
     lumaEventId: ''
   }
 ];
@@ -990,15 +991,14 @@ function renderSchedule(){
   const container = document.getElementById('cardsContainer');
   container.innerHTML = SCHEDULE.map(ev => `
     <div class="card">
-      <span class="tag">${ev.role.label}</span>
       <div class="body">
         <div class="date">${formatDate(ev.date)} · ${txt(ev,'time')}</div>
         <div class="event-title">${txt(ev,'title')}</div>
-        <div class="role">${ev.roleLabelKey ? t(ev.roleLabelKey) : ev.role.label}</div>
+        ${ev.roleLabelKey ? `<div class="role">${t(ev.roleLabelKey)}</div>` : ''}
         <div class="guest">${txt(ev.guest,'name')}</div>
         <div class="bio">${txt(ev.guest,'bio')}</div>
         <div class="price-row">
-          <span class="price">${t('card.from')} ${COP.format(TICKET_PRICES.mujer)}</span>
+          <span class="price">${t('card.from')} ${COP.format(TICKET_PRICES.mujer)} COP</span>
           <span class="spots" data-spots="${ev.id}">${ev.spotsLeft} ${t('card.spots')}</span>
         </div>
         <button class="book-btn" onclick="openModal('${ev.id}')">${t('card.book')}</button>
@@ -1024,7 +1024,7 @@ function renderLineup(){
       <span class="hour">${s.hour}</span>
       <span class="act">
         <span class="kind">${txt(s,'kind')}</span>
-        ${s.act}${s.link ? ` <a href="${s.link}" target="_blank" rel="noopener">${txt(s,'linkLabel')} ↗</a>` : ''}
+        ${txt(s,'act')}${s.link ? ` <a href="${s.link}" target="_blank" rel="noopener">${txt(s,'linkLabel')} ↗</a>` : ''}
       </span>
     </div>
   `).join('');
@@ -1092,7 +1092,7 @@ function updateTotal(){
   const type = document.getElementById('ticketType').value;
   const qty = Math.max(1, parseInt(document.getElementById('qty').value || '1', 10));
   const total = TICKET_PRICES[type] * qty;
-  document.getElementById('totalPrice').textContent = COP.format(total);
+  document.getElementById('totalPrice').textContent = COP.format(total) + ' COP';
 }
 
 function showError(msg){
@@ -1229,7 +1229,7 @@ function showTicket(t){
           ${t.guestHost}<br>
           ${I18N[LANG]['ticket.holder']}: ${t.holderName}<br>
           ${ticketLabel(t.ticketType)} × ${t.qty}<br>
-          ${I18N[LANG]['ticket.paid']}: ${COP.format(t.total)}<br>
+          ${I18N[LANG]['ticket.paid']}: ${COP.format(t.total)} COP<br>
           <span class="id">${t.id}</span>
         </div>
       </div>
