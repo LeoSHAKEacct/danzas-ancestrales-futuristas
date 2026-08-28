@@ -23,6 +23,17 @@ const PRICES = { cover: 2400000 };
 const LABELS = { cover: 'Cover' };
 const MAX_QTY = 8;
 
+/* Discount codes. The percentage is applied HERE, never trusted from the
+   browser — the page only says which code was typed. */
+const PROMOS = { ALCHEMIA: 0.20 };
+
+function resolvePromo(raw){
+  const code = String(raw == null ? '' : raw).trim().toUpperCase();
+  return Object.prototype.hasOwnProperty.call(PROMOS, code)
+    ? { code, off: PROMOS[code] }
+    : { code: '', off: 0 };
+}
+
 function clean(value, max) {
   return String(value == null ? '' : value).slice(0, max);
 }
@@ -57,6 +68,8 @@ module.exports = async (req, res) => {
     const eventTime = clean(body.eventTime, 40);
     const role = clean(body.role, 60);
     const guestHost = clean(body.guestHost, 120);
+    const promo = resolvePromo(body.promoCode);
+    const unitAmount = Math.round(PRICES[type] * (1 - promo.off));
 
     if (!name) return res.status(400).json({ error: 'Falta el nombre / Name is required.' });
     if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: 'Email inválido / Invalid email.' });
@@ -68,8 +81,15 @@ module.exports = async (req, res) => {
     const metadata = {
       eventId, eventTitle, eventDate, eventTime, role, guestHost,
       ticketType: type,
-      holderName: name
+      holderName: name,
+      promoCode: promo.code || 'none',
+      discountPct: promo.off ? String(promo.off * 100) : '0'
     };
+
+    /* Shows in the Stripe payments list without opening each payment, so the
+       dashboard doubles as the guest list. */
+    const description = [name, promo.code || 'sin código', eventTitle]
+      .filter(Boolean).join(' · ');
 
     const session = await getStripe().checkout.sessions.create({
       mode: 'payment',
@@ -78,16 +98,16 @@ module.exports = async (req, res) => {
         quantity: qty,
         price_data: {
           currency: CURRENCY,
-          unit_amount: PRICES[type],
+          unit_amount: unitAmount,
           product_data: {
-            name: `${LABELS[type]} — ${eventTitle}`,
+            name: `${LABELS[type]}${promo.code ? ` (${promo.code} -${promo.off * 100}%)` : ''} — ${eventTitle}`,
             description: [eventDate, eventTime, 'Hotel 1036 Rooftop, Provenza, Medellín']
               .filter(Boolean).join(' · ')
           }
         }
       }],
       metadata,
-      payment_intent_data: { metadata },
+      payment_intent_data: { metadata, description },
       success_url: `${origin}/?paid=1&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/?canceled=1#schedule`
     });

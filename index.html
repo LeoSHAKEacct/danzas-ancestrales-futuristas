@@ -505,6 +505,9 @@
     margin-top:12px; display:none; box-shadow:0 2px 10px rgba(0,0,0,.06);
   }
   .demo-note{ font-size:.72rem; color:#666; margin-top:14px; text-align:center; line-height:1.5; }
+  .promo-applied{ font-size:.78rem; margin-top:8px; font-weight:600; min-height:1em; }
+  .promo-applied.ok{ color:#1a7f43; }
+  .promo-applied.bad{ color:#8a1c1c; }
   .promo-note{
     background:#fff; border:none; border-radius:16px;
     padding:13px 15px; font-size:.8rem; margin-top:10px; line-height:1.5; color:#333;
@@ -759,6 +762,10 @@
     <label data-i18n="modal.emailLabel">Email</label>
     <input type="email" id="guestEmail" placeholder="lola@email.com">
 
+    <label data-i18n="modal.codeLabel">Código de descuento (opcional)</label>
+    <input type="text" id="promoCode" placeholder="ALCHEMIA" autocapitalize="characters" autocomplete="off">
+    <div class="promo-applied" id="promoApplied"></div>
+
     <div class="total"><span data-i18n="modal.total">Total</span><span id="totalPrice">$ 24.000 COP</span></div>
     <div class="error-msg" id="errorMsg"></div>
     <button class="pay-btn" id="payBtn" onclick="startCheckout()" data-i18n="modal.pay">¡Vamos!</button>
@@ -827,6 +834,8 @@ const I18N = {
     'modal.title':'Reserva tu lugar', 'modal.typeLabel':'Tipo de entrada',
     'modal.qtyLabel':'Cantidad', 'modal.nameLabel':'Nombre completo', 'modal.emailLabel':'Email',
     'modal.optCover':'Cover — $24.000 COP',
+    'modal.codeLabel':'Código de descuento (opcional)',
+    'modal.codeInvalid':'Código no válido',
     'modal.promo':'🌸 Si traes 2 amigas, <strong>entrás gratis</strong> — se aplica en la puerta.',
     'modal.total':'Total', 'modal.pay':'¡Vamos!', 'modal.connecting':'Conectando con Stripe…',
     'modal.secure':'🔒 Pago seguro con Stripe — te llevamos a la página de pago y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.',
@@ -881,6 +890,8 @@ const I18N = {
     'modal.title':'Book your spot', 'modal.typeLabel':'Ticket type',
     'modal.qtyLabel':'Quantity', 'modal.nameLabel':'Full name', 'modal.emailLabel':'Email',
     'modal.optCover':'Cover — $24,000 COP',
+    'modal.codeLabel':'Discount code (optional)',
+    'modal.codeInvalid':'Code not recognised',
     'modal.promo':'🌸 Bring 2 girlfriends and <strong>you get in free</strong> — applied at the door.',
     'modal.total':'Total', 'modal.pay':"Let's go!", 'modal.connecting':'Connecting to Stripe…',
     'modal.secure':'🔒 Secure payment with Stripe — we send you to their payment page and you come back with your ticket. Your card never touches this site.',
@@ -982,6 +993,13 @@ const ROLE_POOL = [
 /* Display prices only — the real amounts charged live in api/checkout.js.
    If you change a price, change it in BOTH places. Colombian pesos. */
 const TICKET_PRICES = { cover: 24000 };
+/* Display only — api/checkout.js owns the real discount. Keep in sync. */
+const PROMOS = { ALCHEMIA: 0.20 };
+function promoOff(){
+  const el = document.getElementById('promoCode');
+  const code = (el ? el.value : '').trim().toUpperCase();
+  return PROMOS[code] ? { code, off: PROMOS[code] } : { code:'', off:0 };
+}
 function ticketLabel(){
   return LANG === 'en' ? 'Cover' : 'Cover';
 }
@@ -1128,6 +1146,7 @@ function openModal(eventId){
   document.getElementById('qty').value = 1;
   document.getElementById('guestName').value = '';
   document.getElementById('guestEmail').value = '';
+  document.getElementById('promoCode').value = '';
   document.getElementById('errorMsg').style.display = 'none';
   updateTotal();
   document.getElementById('bookingModal').classList.add('active');
@@ -1158,9 +1177,24 @@ document.getElementById('qty').addEventListener('input', updateTotal);
 function updateTotal(){
   const type = document.getElementById('ticketType').value;
   const qty = Math.max(1, parseInt(document.getElementById('qty').value || '1', 10));
-  const total = TICKET_PRICES[type] * qty;
+  const promo = promoOff();
+  const total = Math.round(TICKET_PRICES[type] * (1 - promo.off)) * qty;
   document.getElementById('totalPrice').textContent = COP.format(total) + ' COP';
+
+  const note = document.getElementById('promoApplied');
+  const typed = document.getElementById('promoCode').value.trim();
+  if (promo.code){
+    note.textContent = `✅ ${promo.code} · −${promo.off * 100}%`;
+    note.className = 'promo-applied ok';
+  } else if (typed){
+    note.textContent = t('modal.codeInvalid');
+    note.className = 'promo-applied bad';
+  } else {
+    note.textContent = '';
+    note.className = 'promo-applied';
+  }
 }
+document.getElementById('promoCode').addEventListener('input', updateTotal);
 
 function showError(msg){
   const el = document.getElementById('errorMsg');
@@ -1196,6 +1230,7 @@ async function startCheckout(){
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         name, email, qty,
+        promoCode: document.getElementById('promoCode').value.trim(),
         ticketType: type,
         eventId: currentEvent.id,
         eventTitle: currentEvent.titleKey ? I18N.es[currentEvent.titleKey] : currentEvent.title,
