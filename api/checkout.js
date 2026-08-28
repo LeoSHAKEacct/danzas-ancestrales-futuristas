@@ -17,10 +17,10 @@ function getStripe(){
 }
 
 /* Colombian pesos. COP is NOT a zero-decimal currency in Stripe, so amounts
-   are in centavos: 25.000 COP => 2_500_000. */
+   are in centavos: 24.000 COP => 2_400_000. */
 const CURRENCY = 'cop';
-const PRICES = { hombre: 3300000, mujer: 1300000 };
-const LABELS = { hombre: 'Entrada Hombre', mujer: 'Entrada Mujer' };
+const PRICES = { cover: 2400000 };
+const LABELS = { cover: 'Cover' };
 const MAX_QTY = 8;
 
 function clean(value, max) {
@@ -47,12 +47,12 @@ module.exports = async (req, res) => {
   try {
     const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body || {});
 
-    const type = body.ticketType === 'hombre' ? 'hombre' : 'mujer';
+    const type = 'cover';   // single cover price for everyone
     const qty = Math.min(MAX_QTY, Math.max(1, parseInt(body.qty, 10) || 1));
     const name = clean(body.name, 120);
     const email = clean(body.email, 200);
     const eventId = clean(body.eventId, 60);
-    const eventTitle = clean(body.eventTitle, 120) || 'Danzas Ancestrales y Futuristas';
+    const eventTitle = clean(body.eventTitle, 120) || 'Tribe 1036 · Rooftop Sessions';
     const eventDate = clean(body.eventDate, 40);
     const eventTime = clean(body.eventTime, 40);
     const role = clean(body.role, 60);
@@ -81,7 +81,7 @@ module.exports = async (req, res) => {
           unit_amount: PRICES[type],
           product_data: {
             name: `${LABELS[type]} — ${eventTitle}`,
-            description: [eventDate, eventTime, 'Hotel Diez Treinta y Seis Rooftop, Provenza, Medellín']
+            description: [eventDate, eventTime, 'Hotel 1036 Rooftop, Provenza, Medellín']
               .filter(Boolean).join(' · ')
           }
         }
