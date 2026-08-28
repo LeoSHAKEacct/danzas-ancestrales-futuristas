@@ -25,7 +25,13 @@ const MAX_QTY = 8;
 
 /* Discount codes. The percentage is applied HERE, never trusted from the
    browser — the page only says which code was typed. */
-const PROMOS = { ALCHEMIA: 0.20 };
+const PROMOS = {
+  ALCHEMIA: 0.20,
+  SHAKE:    0.20,
+  MAMACITA: 0.20,
+  RUTAS:    0.20,
+  FREE:     1.00
+};
 
 function resolvePromo(raw){
   const code = String(raw == null ? '' : raw).trim().toUpperCase();
@@ -70,6 +76,19 @@ module.exports = async (req, res) => {
     const guestHost = clean(body.guestHost, 120);
     const promo = resolvePromo(body.promoCode);
     const unitAmount = Math.round(PRICES[type] * (1 - promo.off));
+
+    /* Stripe can't create a payment for 0, so a full comp skips checkout and
+       the ticket is issued straight away. Those guests are NOT in Stripe. */
+    if (promo.off >= 1) {
+      return res.status(200).json({
+        free: true,
+        code: promo.code,
+        ticketId: 'FREE-' + Math.random().toString(36).slice(2, 10).toUpperCase(),
+        holderName: name,
+        email,
+        qty
+      });
+    }
 
     if (!name) return res.status(400).json({ error: 'Falta el nombre / Name is required.' });
     if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(400).json({ error: 'Email inválido / Invalid email.' });

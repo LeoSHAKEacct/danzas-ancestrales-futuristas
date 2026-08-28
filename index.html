@@ -763,7 +763,7 @@
     <input type="email" id="guestEmail" placeholder="lola@email.com">
 
     <label data-i18n="modal.codeLabel">Código de descuento (opcional)</label>
-    <input type="text" id="promoCode" placeholder="ALCHEMIA" autocapitalize="characters" autocomplete="off">
+    <input type="text" id="promoCode" autocapitalize="characters" autocomplete="off" spellcheck="false">
     <div class="promo-applied" id="promoApplied"></div>
 
     <div class="total"><span data-i18n="modal.total">Total</span><span id="totalPrice">$ 24.000 COP</span></div>
@@ -836,6 +836,9 @@ const I18N = {
     'modal.optCover':'Cover — $24.000 COP',
     'modal.codeLabel':'Código de descuento (opcional)',
     'modal.codeInvalid':'Código no válido',
+    'modal.codeChecking':'Comprobando…',
+    'modal.codeFree':'entrada gratis',
+    'ticket.free':'Cortesía',
     'modal.promo':'🌸 Si traes 2 amigas, <strong>entrás gratis</strong> — se aplica en la puerta.',
     'modal.total':'Total', 'modal.pay':'¡Vamos!', 'modal.connecting':'Conectando con Stripe…',
     'modal.secure':'🔒 Pago seguro con Stripe — te llevamos a la página de pago y volvés con tu entrada. Tu tarjeta nunca pasa por este sitio.',
@@ -892,6 +895,9 @@ const I18N = {
     'modal.optCover':'Cover — $24,000 COP',
     'modal.codeLabel':'Discount code (optional)',
     'modal.codeInvalid':'Code not recognised',
+    'modal.codeChecking':'Checking…',
+    'modal.codeFree':'free entry',
+    'ticket.free':'Complimentary',
     'modal.promo':'🌸 Bring 2 girlfriends and <strong>you get in free</strong> — applied at the door.',
     'modal.total':'Total', 'modal.pay':"Let's go!", 'modal.connecting':'Connecting to Stripe…',
     'modal.secure':'🔒 Secure payment with Stripe — we send you to their payment page and you come back with your ticket. Your card never touches this site.',
@@ -993,12 +999,36 @@ const ROLE_POOL = [
 /* Display prices only — the real amounts charged live in api/checkout.js.
    If you change a price, change it in BOTH places. Colombian pesos. */
 const TICKET_PRICES = { cover: 24000 };
-/* Display only — api/checkout.js owns the real discount. Keep in sync. */
-const PROMOS = { ALCHEMIA: 0.20 };
-function promoOff(){
-  const el = document.getElementById('promoCode');
-  const code = (el ? el.value : '').trim().toUpperCase();
-  return PROMOS[code] ? { code, off: PROMOS[code] } : { code:'', off:0 };
+/* Codes are never listed in this file — the page asks /api/promo, and
+   api/checkout.js independently prices the order. */
+let currentPromo = { code:'', off:0 };
+function promoOff(){ return currentPromo; }
+
+let promoTimer = null;
+let promoChecking = false;
+async function checkPromo(){
+  const typed = document.getElementById('promoCode').value.trim();
+  const note = document.getElementById('promoApplied');
+
+  if (!typed){
+    currentPromo = { code:'', off:0 };
+    promoChecking = false;
+    note.textContent = ''; note.className = 'promo-applied';
+    return updateTotal();
+  }
+
+  promoChecking = true;
+  note.textContent = t('modal.codeChecking');
+  note.className = 'promo-applied';
+  try {
+    const res = await fetch('/api/promo?code=' + encodeURIComponent(typed));
+    const data = await res.json();
+    currentPromo = data.valid ? { code: data.code, off: data.off } : { code:'', off:0 };
+  } catch (err) {
+    currentPromo = { code:'', off:0 };   // offline: charge full price, Stripe decides
+  }
+  promoChecking = false;
+  updateTotal();
 }
 function ticketLabel(){
   return LANG === 'en' ? 'Cover' : 'Cover';
@@ -1147,6 +1177,8 @@ function openModal(eventId){
   document.getElementById('guestName').value = '';
   document.getElementById('guestEmail').value = '';
   document.getElementById('promoCode').value = '';
+  currentPromo = { code:'', off:0 };
+  document.getElementById('promoApplied').textContent = '';
   document.getElementById('errorMsg').style.display = 'none';
   updateTotal();
   document.getElementById('bookingModal').classList.add('active');
@@ -1184,17 +1216,23 @@ function updateTotal(){
   const note = document.getElementById('promoApplied');
   const typed = document.getElementById('promoCode').value.trim();
   if (promo.code){
-    note.textContent = `✅ ${promo.code} · −${promo.off * 100}%`;
+    note.textContent = promo.off >= 1
+      ? `✅ ${promo.code} · ${t('modal.codeFree')}`
+      : `✅ ${promo.code} · −${Math.round(promo.off * 100)}%`;
     note.className = 'promo-applied ok';
-  } else if (typed){
+  } else if (typed && !promoChecking){
     note.textContent = t('modal.codeInvalid');
     note.className = 'promo-applied bad';
-  } else {
+  } else if (!typed){
     note.textContent = '';
     note.className = 'promo-applied';
   }
 }
-document.getElementById('promoCode').addEventListener('input', updateTotal);
+/* debounced so we're not asking the server on every keystroke */
+document.getElementById('promoCode').addEventListener('input', () => {
+  clearTimeout(promoTimer);
+  promoTimer = setTimeout(checkPromo, 350);
+});
 
 function showError(msg){
   const el = document.getElementById('errorMsg');
@@ -1242,6 +1280,31 @@ async function startCheckout(){
     });
 
     const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.free){
+      const ticket = {
+        id: data.ticketId,
+        eventTitle: txt(currentEvent,'title'),
+        eventDate: currentEvent.dateTBA ? '' : currentEvent.date.toISOString(),
+        eventTime: txt(currentEvent,'time'),
+        role: '',
+        guestHost: currentEvent.guest ? txt(currentEvent.guest,'name') : '',
+        holderName: data.holderName,
+        holderEmail: data.email,
+        ticketType: 'cover',
+        qty: data.qty,
+        total: 0,
+        promoCode: data.code,
+        purchasedAt: new Date().toISOString()
+      };
+      payBtn.disabled = false;
+      payBtn.textContent = t('modal.pay');
+      saveTicket(ticket);
+      closeModal();
+      showTicket(ticket);
+      return;
+    }
+
     if (!res.ok || !data.url) throw new Error(data.error || t('err.checkout'));
 
     window.location.href = data.url; // hand off to Stripe
@@ -1331,7 +1394,9 @@ function showTicket(t){
           ${t.guestHost}<br>
           ${I18N[LANG]['ticket.holder']}: ${t.holderName}<br>
           ${ticketLabel()} × ${t.qty}<br>
-          ${I18N[LANG]['ticket.paid']}: ${COP.format(t.total)} COP<br>
+          ${t.total > 0
+              ? `${I18N[LANG]['ticket.paid']}: ${COP.format(t.total)} COP`
+              : I18N[LANG]['ticket.free']}${t.promoCode ? ` · ${t.promoCode}` : ''}<br>
           <span class="id">${t.id}</span>
         </div>
       </div>
