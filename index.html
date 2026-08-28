@@ -153,6 +153,9 @@
     padding:14px 16px; box-shadow:0 10px 30px rgba(0,0,0,.12);
   }
   .next-event:empty{ display:none; }
+  .next-event{ cursor:pointer; transition:.18s; }
+  .next-event:hover{ background:rgba(255,255,255,.78); transform:translateY(-2px); box-shadow:0 14px 34px rgba(0,0,0,.16); }
+  .next-event:focus-visible{ outline:3px solid var(--wine); outline-offset:3px; }
   .next-event .thumb{ flex-shrink:0; line-height:0; }
   .next-event .thumb img{
     width:64px; height:96px; object-fit:cover; border-radius:10px; display:block;
@@ -170,7 +173,7 @@
   .next-event .ne-meta{ font-size:.78rem; color:var(--ink); opacity:.8; line-height:1.45; }
   .next-event .ne-price{ font-weight:700; color:var(--wine); font-size:.88rem; margin-top:4px; }
   .next-event .ne-btn{
-    flex-shrink:0; border:none; cursor:pointer; border-radius:999px;
+    flex-shrink:0; border:none; cursor:pointer; border-radius:999px; pointer-events:none;
     padding:11px 20px; font-family:'Poppins',sans-serif; font-weight:600; font-size:.86rem;
     color:#fff; text-shadow:0 1px 3px rgba(0,0,0,.6);
   }
@@ -268,7 +271,6 @@
   }
   .hero .subtitle-es{ font-family:'Yeseva One',serif; color:var(--wine); font-size:1.4rem; margin-bottom:22px;}
   .hero p.desc{ max-width:560px; margin:0 auto 30px; opacity:.85; }
-  .hero-actions{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; }
 
   @media (min-width:900px){
     .hero-columns{
@@ -277,7 +279,6 @@
     .hero-right{ flex:1.1; text-align:center; }
     .hero-left{ flex:1; text-align:left; }
     .hero-left .subtitle-es, .hero-left p.desc{ margin-left:0; margin-right:0; }
-    .hero-actions{ justify-content:flex-start; }
   }
   .btn{
     display:inline-block; padding:15px 34px; border-radius:40px; font-weight:700;
@@ -623,8 +624,6 @@
     .hero .subtitle-es{ font-size:1.2rem; margin-bottom:16px; }
     .hero .subtitle{ font-size:1.1rem; }
     .hero p.desc{ font-size:.95rem; line-height:1.7; margin-bottom:24px; }
-    .hero-actions{ flex-direction:column; align-items:stretch; gap:12px; }
-    .hero-actions .btn{ width:100%; text-align:center; padding:14px 20px; }
 
     /* single column, and the video circle stops eating the screen */
     .about-grid{ grid-template-columns:1fr; gap:26px; }
@@ -680,7 +679,6 @@
 <header class="hero">
   <div class="hero-inner">
     <h1>DANZAS ANCESTRALES<br>Y FUTURISTAS</h1>
-    <div class="next-event" id="nextEvent"></div>
     <div class="hero-columns">
       <div class="hero-right">
         <div class="hero-character" aria-hidden="true">
@@ -691,10 +689,7 @@
         <div class="subtitle-es" data-i18n="hero.tagline">A social-gathering to celebrate life</div>
         <div class="subtitle" data-i18n="hero.kicker">Rooftop Sessions</div>
         <p class="desc" data-i18n="hero.desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
-        <div class="hero-actions">
-          <a href="#schedule" class="btn btn-primary" data-i18n="hero.btnParties">Ver próximas fiestas</a>
-          <a href="#about" class="btn btn-outline" data-i18n="hero.btnAbout">La Movida ↓</a>
-        </div>
+        <div class="next-event" id="nextEvent"></div>
       </div>
     </div>
   </div>
@@ -1156,10 +1151,13 @@ function renderNextEvent(){
   const ev = SCHEDULE.find(e => !e.dateTBA && !e.bare);
   if (!ev){ box.innerHTML = ''; return; }
 
+  box.setAttribute('role', 'button');
+  box.setAttribute('tabindex', '0');
+  box.onclick = () => openModal(ev.id);
+  box.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openModal(ev.id); } };
+
   box.innerHTML = `
-    ${ev.poster ? `<a class="thumb" href="${ev.poster}" onclick="openPoster('${ev.poster}'); return false;">
-      <img src="${ev.poster}" alt="${txt(ev,'title')}">
-    </a>` : ''}
+    ${ev.poster ? `<span class="thumb"><img src="${ev.poster}" alt="${txt(ev,'title')}"></span>` : ''}
     <div class="ne-body">
       <div class="ne-label">${t('hero.nextLabel')}</div>
       <div class="ne-title">${txt(ev,'title')}</div>
