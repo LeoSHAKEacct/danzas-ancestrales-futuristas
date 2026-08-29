@@ -181,7 +181,6 @@
     font-size:.98rem; line-height:1.25; margin-bottom:4px;
   }
   .next-event .ne-meta{ font-size:.78rem; color:var(--ink); opacity:.8; line-height:1.45; }
-  .next-event .ne-price{ font-weight:700; color:var(--wine); font-size:.88rem; margin-top:4px; }
   .next-event .ne-btn{
     flex-shrink:0; border:none; cursor:pointer; border-radius:999px; pointer-events:none;
     padding:11px 20px; font-family:'Poppins',sans-serif; font-weight:600; font-size:.86rem;
@@ -1205,7 +1204,6 @@ function renderNextEvent(){
       <div class="ne-label">${t('hero.nextLabel')}</div>
       <div class="ne-title">${txt(ev,'title')}</div>
       <div class="ne-meta">${formatDate(ev.date)}<br>${txt(ev,'time')} · ${t('venue')}</div>
-      <div class="ne-price">${COP.format(TICKET_PRICES.cover)} COP</div>
     </div>
     <button class="ne-btn starfield" onclick="openModal('${ev.id}')">${t('card.book')}</button>
   `;
