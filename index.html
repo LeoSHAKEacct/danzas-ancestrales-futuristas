@@ -116,9 +116,18 @@
     background:var(--wine);
     overflow:hidden;
   }
+  /* Vertical Short used as a full-bleed backdrop: size the frame 9:16 and
+     scale it until it covers, so the player never letterboxes. */
+  .hero-video{ position:absolute; inset:0; z-index:0; overflow:hidden; pointer-events:none; }
+  .hero-video iframe{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:max(100vw, 56.25vh);
+    aspect-ratio:9 / 16;
+    border:0;
+  }
   .hero::before{
     content:"";
-    position:absolute; inset:-15%; z-index:0;
+    position:absolute; inset:-15%; z-index:1;
     background:
       radial-gradient(circle at 22% 28%, var(--hotpink) 0%, transparent 40%),
       radial-gradient(circle at 78% 15%, var(--mustard) 0%, transparent 38%),
@@ -127,6 +136,7 @@
       radial-gradient(circle at 50% 50%, var(--purple) 0%, transparent 55%),
       radial-gradient(circle at 50% 95%, var(--olive) 0%, transparent 35%);
     filter:blur(70px) saturate(1.5) contrast(1.1);
+    opacity:.42;
     animation:psychSwirl 24s ease-in-out infinite alternate;
   }
   @keyframes psychSwirl{
@@ -136,8 +146,8 @@
   }
   .hero::after{
     content:"";
-    position:absolute; inset:0; z-index:1;
-    background:radial-gradient(circle at 50% 78%, rgba(251,239,219,.0) 0%, var(--cream) 62%);
+    position:absolute; inset:0; z-index:2;
+    background:radial-gradient(circle at 50% 70%, rgba(251,239,219,.28) 0%, rgba(251,239,219,.82) 74%);
   }
   .hero-inner{
     position:relative; z-index:5; max-width:1180px; width:100%; padding:0 20px;
@@ -677,6 +687,11 @@
 </nav>
 
 <header class="hero">
+  <div class="hero-video" aria-hidden="true">
+    <iframe
+      src="https://www.youtube-nocookie.com/embed/UQtL8eGGWVk?autoplay=1&amp;mute=1&amp;loop=1&amp;playlist=UQtL8eGGWVk&amp;controls=0&amp;modestbranding=1&amp;rel=0&amp;playsinline=1&amp;disablekb=1&amp;fs=0&amp;iv_load_policy=3"
+      title="Tribe 1036 rooftop" frameborder="0" allow="autoplay; encrypted-media" tabindex="-1"></iframe>
+  </div>
   <div class="hero-inner">
     <h1>DANZAS ANCESTRALES<br>Y FUTURISTAS</h1>
     <div class="hero-columns">
