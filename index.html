@@ -309,6 +309,30 @@
     text-align:center; font-family:'Yeseva One',serif; color:var(--terracotta); font-size:1.2rem; margin-bottom:50px;
   }
 
+  /* ---------- INTRO BAND ----------
+     Was inside the hero; now its own section so the hero is just title,
+     character and the next-party card. */
+  .intro{
+    background:var(--cream); text-align:center;
+    padding:56px 6% 44px;
+  }
+  .intro .subtitle-es{
+    font-family:'Yeseva One',serif; color:var(--wine);
+    font-size:1.4rem; margin-bottom:8px;
+  }
+  .intro .subtitle{
+    font-size:1.25rem; color:var(--ink); font-weight:600; margin-bottom:14px;
+  }
+  .intro p.desc{
+    max-width:660px; margin:0 auto; opacity:.85; line-height:1.8;
+  }
+  @media (max-width:600px){
+    .intro{ padding:38px 20px 30px; }
+    .intro .subtitle-es{ font-size:1.2rem; }
+    .intro .subtitle{ font-size:1.1rem; }
+    .intro p.desc{ font-size:.95rem; line-height:1.7; }
+  }
+
   /* ---------- ABOUT ---------- */
   .about{ background:var(--parchment); }
   /* sun title stays golden, with a warm outline so it holds on parchment */
@@ -701,14 +725,18 @@
         </div>
       </div>
       <div class="hero-left">
-        <div class="subtitle-es" data-i18n="hero.tagline">A social-gathering to celebrate life</div>
-        <div class="subtitle" data-i18n="hero.kicker">Rooftop Sessions</div>
-        <p class="desc" data-i18n="hero.desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
         <div class="next-event" id="nextEvent"></div>
       </div>
     </div>
   </div>
 </header>
+
+<section class="intro">
+  <div class="subtitle-es" data-i18n="hero.tagline">A social-gathering to celebrate life</div>
+  <div class="subtitle" data-i18n="hero.kicker">Rooftop Sessions</div>
+  <p class="desc" data-i18n="hero.desc">Every 15 days our rooftop turns into a free-spirited gathering — live rhythm, wellness, games, vibe-coding sessions, co-working, and a rotating cast of dancers, movement activators, yoga facilitators, and musicians. Open to all cultures, all backgrounds — digital nomads, locals, and the curious alike.</p>
+</section>
+
 <div class="scallop-top"></div>
 
 <section class="about" id="about">
